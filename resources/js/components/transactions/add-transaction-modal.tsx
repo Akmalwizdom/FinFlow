@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Check, ChevronDown, Lock, Notebook, Tag, X } from 'lucide-react';
+import { Check, ChevronDown, Lock, Notebook, Tag, X, Calendar } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -19,16 +19,20 @@ export interface TransactionFormData {
     type: 'expense' | 'income';
     amount: number;
     category: string;
-    notes: string;
+    note?: string;
+    date: string;
 }
 
 const categories = [
-    { value: 'food', label: 'Food & Dining' },
-    { value: 'transport', label: 'Transport' },
-    { value: 'shopping', label: 'Shopping' },
-    { value: 'utilities', label: 'Utilities' },
-    { value: 'entertainment', label: 'Entertainment' },
-    { value: 'other', label: 'Other' },
+    { value: 'Makanan', label: 'Makanan' },
+    { value: 'Transportasi', label: 'Transportasi' },
+    { value: 'Belanja', label: 'Belanja' },
+    { value: 'Tagihan', label: 'Tagihan' },
+    { value: 'Hiburan', label: 'Hiburan' },
+    { value: 'Kesehatan', label: 'Kesehatan' },
+    { value: 'Gaji', label: 'Gaji' },
+    { value: 'Freelance', label: 'Freelance' },
+    { value: 'Lainnya', label: 'Lainnya' },
 ];
 
 export function AddTransactionModal({
@@ -39,7 +43,8 @@ export function AddTransactionModal({
     const [type, setType] = useState<'expense' | 'income'>('expense');
     const [amount, setAmount] = useState('');
     const [category, setCategory] = useState('');
-    const [notes, setNotes] = useState('');
+    const [note, setNote] = useState('');
+    const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -49,13 +54,15 @@ export function AddTransactionModal({
             type,
             amount: parseFloat(amount),
             category,
-            notes,
+            note: note || undefined,
+            date,
         });
 
         // Reset form
         setAmount('');
         setCategory('');
-        setNotes('');
+        setNote('');
+        setDate(new Date().toISOString().split('T')[0]);
         onOpenChange(false);
     };
 
@@ -170,8 +177,8 @@ export function AddTransactionModal({
                             <div className="relative">
                                 <Notebook className="absolute left-4 top-4 size-5 text-muted-foreground" />
                                 <textarea
-                                    value={notes}
-                                    onChange={(e) => setNotes(e.target.value)}
+                                    value={note}
+                                    onChange={(e) => setNote(e.target.value)}
                                     placeholder="What was this for?"
                                     className="h-24 w-full resize-none rounded-xl border border-border bg-card pl-12 pr-4 pt-3.5 text-base font-normal placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                                 />

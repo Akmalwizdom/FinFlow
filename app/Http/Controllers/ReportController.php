@@ -31,4 +31,23 @@ class ReportController extends Controller
             'data' => $report,
         ]);
     }
+
+    /**
+     * Get balance history for trend chart.
+     */
+    public function balanceHistory(Request $request): JsonResponse
+    {
+        $months = $request->get('months', 6);
+
+        $history = $this->reportService->getBalanceHistory(
+            $request->user()->id,
+            (int) $months
+        );
+
+        return response()->json([
+            'success' => true,
+            'data' => $history,
+        ]);
+    }
 }
+

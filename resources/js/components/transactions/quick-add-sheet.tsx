@@ -7,26 +7,29 @@ import {
     SheetContent,
 } from '@/components/ui/sheet';
 import { Numpad } from './numpad';
+import { type TransactionFormData } from './add-transaction-modal';
 
 interface QuickAddSheetProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    onSave?: (data: { type: 'expense' | 'income'; amount: number; category: string; notes: string }) => void;
+    onSave?: (data: TransactionFormData) => void;
 }
 
 const categories = [
-    { value: 'shopping', label: 'Shopping & Groceries' },
-    { value: 'food', label: 'Dining Out' },
-    { value: 'transport', label: 'Transport' },
-    { value: 'entertainment', label: 'Entertainment' },
-    { value: 'health', label: 'Health' },
+    { value: 'Makanan', label: 'Makanan' },
+    { value: 'Transportasi', label: 'Transportasi' },
+    { value: 'Belanja', label: 'Belanja' },
+    { value: 'Hiburan', label: 'Hiburan' },
+    { value: 'Kesehatan', label: 'Kesehatan' },
+    { value: 'Gaji', label: 'Gaji' },
+    { value: 'Freelance', label: 'Freelance' },
 ];
 
 export function QuickAddSheet({ open, onOpenChange, onSave }: QuickAddSheetProps) {
     const [type, setType] = useState<'expense' | 'income'>('expense');
     const [amount, setAmount] = useState('0');
-    const [category, setCategory] = useState('shopping');
-    const [notes, setNotes] = useState('');
+    const [category, setCategory] = useState('Makanan');
+    const [note, setNote] = useState('');
 
     const handleNumpadInput = (value: string) => {
         setAmount((prev) => {
@@ -69,13 +72,14 @@ export function QuickAddSheet({ open, onOpenChange, onSave }: QuickAddSheetProps
             type,
             amount: numAmount,
             category,
-            notes,
+            note: note || undefined,
+            date: new Date().toISOString().split('T')[0],
         });
 
         // Reset
         setAmount('0');
-        setCategory('shopping');
-        setNotes('');
+        setCategory('Makanan');
+        setNote('');
         onOpenChange(false);
     };
 
@@ -178,8 +182,8 @@ export function QuickAddSheet({ open, onOpenChange, onSave }: QuickAddSheetProps
                             </label>
                             <input
                                 type="text"
-                                value={notes}
-                                onChange={(e) => setNotes(e.target.value)}
+                                value={note}
+                                onChange={(e) => setNote(e.target.value)}
                                 placeholder="What was this for?"
                                 className="w-full rounded-xl border-none bg-secondary px-4 py-4 font-medium placeholder:text-muted-foreground focus:ring-2 focus:ring-primary"
                             />

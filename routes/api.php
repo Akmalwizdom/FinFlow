@@ -28,6 +28,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 
     // Reports
     Route::get('reports/monthly', [ReportController::class, 'monthly']);
+    Route::get('reports/balance-history', [ReportController::class, 'balanceHistory']);
 
     // Insights
     Route::get('insights', [InsightController::class, 'index']);

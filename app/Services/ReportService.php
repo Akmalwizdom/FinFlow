@@ -231,4 +231,62 @@ class ReportService
 
         return (int) round((($current - $previous) / $previous) * 100);
     }
+
+    /**
+     * Get monthly balance history for trend chart.
+     */
+    public function getBalanceHistory(int $userId, int $months = 6): array
+    {
+        $history = [];
+        $runningBalance = 0;
+
+        // Get all transactions ordered by date
+        $transactions = DB::table('transactions')
+            ->where('user_id', $userId)
+            ->orderBy('transaction_date')
+            ->get();
+
+        // Calculate running balance at end of each month
+        $monthlyBalances = [];
+        foreach ($transactions as $tx) {
+            $month = date('Y-m', strtotime($tx->transaction_date));
+            if (!isset($monthlyBalances[$month])) {
+                $monthlyBalances[$month] = 0;
+            }
+            $amount = $tx->type === 'income' ? $tx->amount : -$tx->amount;
+            $monthlyBalances[$month] += $amount;
+        }
+
+        // Calculate cumulative balance per month
+        $cumulative = 0;
+        $cumulativeByMonth = [];
+        foreach ($monthlyBalances as $month => $change) {
+            $cumulative += $change;
+            $cumulativeByMonth[$month] = $cumulative;
+        }
+
+        // Get last N months
+        $now = Carbon::now();
+        for ($i = $months - 1; $i >= 0; $i--) {
+            $date = $now->copy()->subMonths($i);
+            $monthKey = $date->format('Y-m');
+            $monthLabel = $date->format('M');
+
+            // Find the balance at end of this month or previous
+            $balance = 0;
+            foreach ($cumulativeByMonth as $m => $bal) {
+                if ($m <= $monthKey) {
+                    $balance = $bal;
+                }
+            }
+
+            $history[] = [
+                'month' => $monthLabel,
+                'month_key' => $monthKey,
+                'value' => round($balance, 2),
+            ];
+        }
+
+        return $history;
+    }
 }

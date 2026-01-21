@@ -1,14 +1,23 @@
 import { Head } from '@inertiajs/react';
-import { EyeOff } from 'lucide-react';
+import { EyeOff, Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 import {
     BalanceCards,
     BalanceTrendChart,
     CategoryDonut,
     RecentTransactions,
-    type Transaction,
+    type Transaction as DashboardTransaction,
 } from '@/components/dashboard';
 import AppLayout from '@/layouts/app-layout';
+import {
+    dashboardApi,
+    reportsApi,
+    transactionsApi,
+    type BalanceHistoryItem,
+    type DashboardSummary,
+    type Transaction,
+} from '@/lib/api';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 
@@ -19,62 +28,81 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-// Mock data for Phase 1 development
-const mockBalanceData = {
-    balance: 48250.0,
-    balanceChange: 2.4,
-    income: 7400.0,
-    incomeProgress: 85,
-    expenses: 3120.0,
-    remainingBudget: 4280.0,
-};
-
-const mockTrendData = [
-    { month: 'JAN', value: 35000 },
-    { month: 'FEB', value: 38000 },
-    { month: 'MAR', value: 42000 },
-    { month: 'APR', value: 40000 },
-    { month: 'MAY', value: 45000 },
-    { month: 'JUN', value: 48250 },
-];
-
-const mockCategoryData = [
-    { name: 'Housing', amount: 1800, color: '#007180' },
-    { name: 'Food & Drink', amount: 640, color: '#4db6ac' },
-    { name: 'Other', amount: 680, color: '#d1d5db' },
-];
-
-const mockTransactions: Transaction[] = [
-    {
-        id: 1,
-        description: 'Apple Store - New MacBook',
-        category: 'Shopping',
-        amount: 1299.0,
-        date: '2 hours ago',
-        account: 'Credit Card • **** 4920',
-        type: 'expense',
-    },
-    {
-        id: 2,
-        description: 'Salary Deposit',
-        category: 'Income',
-        amount: 5200.0,
-        date: 'Yesterday',
-        account: 'Savings Account • **** 1102',
-        type: 'income',
-    },
-    {
-        id: 3,
-        description: 'Blue Bottle Coffee',
-        category: 'Food & Drink',
-        amount: 12.5,
-        date: 'Oct 12, 2023',
-        account: 'Debit Card • **** 2291',
-        type: 'expense',
-    },
-];
-
 export default function Dashboard() {
+    const [loading, setLoading] = useState(true);
+    const [summary, setSummary] = useState<DashboardSummary | null>(null);
+    const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
+    const [trendData, setTrendData] = useState<{ month: string; value: number }[]>([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [summaryRes, transactionsRes, historyRes] = await Promise.all([
+                    dashboardApi.getSummary(),
+                    transactionsApi.list({ per_page: 5 }),
+                    reportsApi.balanceHistory(6),
+                ]);
+
+                setSummary(summaryRes.data.data);
+                setRecentTransactions(transactionsRes.data.data.items);
+
+                // Transform balance history to trend data
+                const history = historyRes.data.data.map((item: BalanceHistoryItem) => ({
+                    month: item.month.toUpperCase(),
+                    value: item.value,
+                }));
+                setTrendData(history);
+            } catch (error) {
+                console.error('Failed to fetch dashboard data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    if (loading) {
+        return (
+            <AppLayout breadcrumbs={breadcrumbs}>
+                <Head title="Dashboard" />
+                <div className="flex flex-1 items-center justify-center">
+                    <Loader2 className="size-8 animate-spin text-muted-foreground" />
+                </div>
+            </AppLayout>
+        );
+    }
+
+    // Transform data for components
+    const balanceData = {
+        balance: summary?.current_balance ?? 0,
+        balanceChange: 0,
+        income: summary?.monthly_summary.total_income ?? 0,
+        incomeProgress: 100,
+        expenses: summary?.monthly_summary.total_expense ?? 0,
+        remainingBudget: summary?.monthly_summary.remaining ?? 0,
+    };
+
+    const categoryData = summary?.expense_by_category.map((cat) => ({
+        name: cat.category,
+        amount: cat.amount,
+        color: cat.color || '#d1d5db',
+    })) ?? [];
+
+    const dashboardTransactions: DashboardTransaction[] = recentTransactions.map((t) => ({
+        id: t.id,
+        description: t.note || t.category.name,
+        category: t.category.name,
+        amount: t.amount,
+        date: new Date(t.transaction_date).toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+        }),
+        account: t.spending_type ? `${t.spending_type.toUpperCase()}` : '',
+        type: t.type,
+    }));
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -100,24 +128,23 @@ export default function Dashboard() {
                 </div>
 
                 {/* Balance Cards */}
-                <BalanceCards {...mockBalanceData} />
+                <BalanceCards {...balanceData} />
 
                 {/* Charts Section */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
                     <div className="lg:col-span-2">
-                        <BalanceTrendChart data={mockTrendData} />
+                        <BalanceTrendChart data={trendData} />
                     </div>
                     <CategoryDonut
-                        categories={mockCategoryData}
-                        totalSpent={mockBalanceData.expenses}
+                        categories={categoryData}
+                        totalSpent={balanceData.expenses}
                     />
                 </div>
 
                 {/* Recent Transactions */}
                 <RecentTransactions
-                    transactions={mockTransactions}
+                    transactions={dashboardTransactions}
                     onViewAll={() => {
-                        // Navigate to transactions page
                         window.location.href = '/transactions';
                     }}
                 />
@@ -125,3 +152,4 @@ export default function Dashboard() {
         </AppLayout>
     );
 }
+
