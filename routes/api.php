@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExportController;
+use App\Http\Controllers\ForecastController;
+use App\Http\Controllers\InsightController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TransactionController;
@@ -26,11 +29,23 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     // Reports
     Route::get('reports/monthly', [ReportController::class, 'monthly']);
 
+    // Insights
+    Route::get('insights', [InsightController::class, 'index']);
+
+    // Forecast
+    Route::get('forecast', [ForecastController::class, 'index']);
+
+    // Export
+    Route::get('export/all', [ExportController::class, 'all']);
+    Route::get('export/monthly', [ExportController::class, 'monthly']);
+    Route::get('export/category/{category}', [ExportController::class, 'category']);
+
     // Settings
     Route::get('settings', [SettingsController::class, 'show']);
     Route::put('settings', [SettingsController::class, 'update']);
     Route::put('settings/password', [SettingsController::class, 'changePassword']);
     Route::delete('settings/account', [SettingsController::class, 'destroy']);
 });
+
 
 
