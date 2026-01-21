@@ -1,0 +1,206 @@
+@import 'tailwindcss';
+
+@import 'tw-animate-css';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@custom-variant dark (&:is(.dark *));
+
+/* Import Manrope font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+@theme {
+    /* Typography - Manrope for FinFlow design */
+    --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --radius-lg: var(--radius);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 4px);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+
+    /* FinFlow Custom Colors */
+    --color-income: var(--income);
+    --color-expense: var(--expense);
+}
+
+:root {
+    /* FinFlow Design Tokens - Light Mode */
+    --background: #f9fafa;
+    --foreground: #101818;
+    --card: #ffffff;
+    --card-foreground: #101818;
+    --popover: #ffffff;
+    --popover-foreground: #101818;
+    
+    /* Primary - Teal */
+    --primary: #007180;
+    --primary-foreground: #ffffff;
+    
+    /* Secondary */
+    --secondary: #f0f4f5;
+    --secondary-foreground: #101818;
+    
+    /* Muted */
+    --muted: #f0f4f5;
+    --muted-foreground: #5e878d;
+    
+    /* Accent */
+    --accent: #f0f4f5;
+    --accent-foreground: #101818;
+    
+    /* Destructive - Red/Expense */
+    --destructive: #e73108;
+    --destructive-foreground: #ffffff;
+    
+    /* Border & Input */
+    --border: #dae5e7;
+    --input: #dae5e7;
+    --ring: #007180;
+    
+    /* Chart Colors */
+    --chart-1: #007180;
+    --chart-2: #4db6ac;
+    --chart-3: #80cbc4;
+    --chart-4: #b2dfdb;
+    --chart-5: #e0f2f1;
+    
+    /* Radius */
+    --radius: 0.625rem;
+    
+    /* Sidebar */
+    --sidebar: #ffffff;
+    --sidebar-foreground: #101818;
+    --sidebar-primary: #007180;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: rgba(0, 113, 128, 0.1);
+    --sidebar-accent-foreground: #007180;
+    --sidebar-border: #dae5e7;
+    --sidebar-ring: #007180;
+    
+    /* FinFlow Semantic Colors */
+    --income: #078834;
+    --expense: #e73108;
+}
+
+.dark {
+    /* FinFlow Design Tokens - Dark Mode */
+    --background: #1a1a1a;
+    --foreground: #f0f4f5;
+    --card: #27272a;
+    --card-foreground: #f0f4f5;
+    --popover: #27272a;
+    --popover-foreground: #f0f4f5;
+    
+    /* Primary - Teal */
+    --primary: #4db6ac;
+    --primary-foreground: #101818;
+    
+    /* Secondary */
+    --secondary: #27272a;
+    --secondary-foreground: #f0f4f5;
+    
+    /* Muted */
+    --muted: #27272a;
+    --muted-foreground: #a1a1aa;
+    
+    /* Accent */
+    --accent: #27272a;
+    --accent-foreground: #f0f4f5;
+    
+    /* Destructive */
+    --destructive: #ef5350;
+    --destructive-foreground: #ffffff;
+    
+    /* Border & Input */
+    --border: #3f3f46;
+    --input: #3f3f46;
+    --ring: #4db6ac;
+    
+    /* Chart Colors - Dark mode */
+    --chart-1: #4db6ac;
+    --chart-2: #80cbc4;
+    --chart-3: #b2dfdb;
+    --chart-4: #e0f2f1;
+    --chart-5: #007180;
+    
+    /* Sidebar - Dark */
+    --sidebar: #27272a;
+    --sidebar-foreground: #f0f4f5;
+    --sidebar-primary: #4db6ac;
+    --sidebar-primary-foreground: #101818;
+    --sidebar-accent: rgba(77, 182, 172, 0.1);
+    --sidebar-accent-foreground: #4db6ac;
+    --sidebar-border: #3f3f46;
+    --sidebar-ring: #4db6ac;
+    
+    /* FinFlow Semantic Colors - Dark */
+    --income: #4caf50;
+    --expense: #ef5350;
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+/* Custom scrollbar for FinFlow design */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #dae5e7;
+    border-radius: 10px;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #3f3f46;
+}
