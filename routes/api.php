@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
@@ -12,11 +14,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
+    // Dashboard
+    Route::get('dashboard', [DashboardController::class, 'index']);
+
     // Transactions
     Route::apiResource('transactions', TransactionController::class);
 
     // Categories
     Route::apiResource('categories', CategoryController::class);
+
+    // Reports
+    Route::get('reports/monthly', [ReportController::class, 'monthly']);
 
     // Settings
     Route::get('settings', [SettingsController::class, 'show']);
@@ -24,4 +32,5 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::put('settings/password', [SettingsController::class, 'changePassword']);
     Route::delete('settings/account', [SettingsController::class, 'destroy']);
 });
+
 
