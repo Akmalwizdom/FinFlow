@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
+Route::middleware(['auth:web'])->prefix('v1')->group(function () {
     // Dashboard
     Route::get('dashboard', [DashboardController::class, 'index']);
 
