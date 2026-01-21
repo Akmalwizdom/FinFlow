@@ -18,7 +18,6 @@ class Transaction extends Model
         'amount',
         'note',
         'transaction_date',
-        'spending_type',
     ];
 
     protected $casts = [
@@ -64,21 +63,5 @@ class Transaction extends Model
     public function scopeExpense($query)
     {
         return $query->where('type', 'expense');
-    }
-
-    /**
-     * Scope a query to only include need spending.
-     */
-    public function scopeNeed($query)
-    {
-        return $query->where('spending_type', 'need');
-    }
-
-    /**
-     * Scope a query to only include want spending.
-     */
-    public function scopeWant($query)
-    {
-        return $query->where('spending_type', 'want');
     }
 }

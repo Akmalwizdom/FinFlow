@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Check, ChevronDown, X } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -8,28 +8,38 @@ import {
 } from '@/components/ui/sheet';
 import { Numpad } from './numpad';
 import { type TransactionFormData } from './add-transaction-modal';
+import { type Category } from '@/lib/api';
 
 interface QuickAddSheetProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    categories: Category[];
     onSave?: (data: TransactionFormData) => void;
 }
 
-const categories = [
-    { value: 'Makanan', label: 'Makanan' },
-    { value: 'Transportasi', label: 'Transportasi' },
-    { value: 'Belanja', label: 'Belanja' },
-    { value: 'Hiburan', label: 'Hiburan' },
-    { value: 'Kesehatan', label: 'Kesehatan' },
-    { value: 'Gaji', label: 'Gaji' },
-    { value: 'Freelance', label: 'Freelance' },
-];
-
-export function QuickAddSheet({ open, onOpenChange, onSave }: QuickAddSheetProps) {
+export function QuickAddSheet({ open, onOpenChange, categories, onSave }: QuickAddSheetProps) {
     const [type, setType] = useState<'expense' | 'income'>('expense');
     const [amount, setAmount] = useState('0');
-    const [category, setCategory] = useState('Makanan');
+    const [categoryId, setCategoryId] = useState<number | ''>('');
     const [note, setNote] = useState('');
+
+    // Filter categories by selected type
+    const filteredCategories = useMemo(() => {
+        return categories.filter((cat) => cat.type === type);
+    }, [categories, type]);
+
+    // Set initial category when filtered categories change
+    useMemo(() => {
+        if (filteredCategories.length > 0 && categoryId === '') {
+            setCategoryId(filteredCategories[0].id);
+        }
+    }, [filteredCategories]);
+
+    const handleTypeChange = (newType: 'expense' | 'income') => {
+        setType(newType);
+        const newFiltered = categories.filter((cat) => cat.type === newType);
+        setCategoryId(newFiltered.length > 0 ? newFiltered[0].id : '');
+    };
 
     const handleNumpadInput = (value: string) => {
         setAmount((prev) => {
@@ -66,20 +76,22 @@ export function QuickAddSheet({ open, onOpenChange, onSave }: QuickAddSheetProps
 
     const handleSubmit = () => {
         const numAmount = parseFloat(amount) || 0;
-        if (numAmount <= 0) return;
+        if (numAmount <= 0 || !categoryId) return;
 
         onSave?.({
             type,
             amount: numAmount,
-            category,
+            category_id: categoryId as number,
             note: note || undefined,
             date: new Date().toISOString().split('T')[0],
         });
 
         // Reset
         setAmount('0');
-        setCategory('Makanan');
+        const defaultCat = categories.filter((cat) => cat.type === 'expense');
+        setCategoryId(defaultCat.length > 0 ? defaultCat[0].id : '');
         setNote('');
+        setType('expense');
         onOpenChange(false);
     };
 
@@ -119,7 +131,7 @@ export function QuickAddSheet({ open, onOpenChange, onSave }: QuickAddSheetProps
                                 type="radio"
                                 name="mobile_type"
                                 checked={type === 'expense'}
-                                onChange={() => setType('expense')}
+                                onChange={() => handleTypeChange('expense')}
                                 className="hidden"
                             />
                             <span className="text-sm font-semibold">Expense</span>
@@ -135,7 +147,7 @@ export function QuickAddSheet({ open, onOpenChange, onSave }: QuickAddSheetProps
                                 type="radio"
                                 name="mobile_type"
                                 checked={type === 'income'}
-                                onChange={() => setType('income')}
+                                onChange={() => handleTypeChange('income')}
                                 className="hidden"
                             />
                             <span className="text-sm font-semibold">Income</span>
@@ -160,13 +172,13 @@ export function QuickAddSheet({ open, onOpenChange, onSave }: QuickAddSheetProps
                             </label>
                             <div className="relative">
                                 <select
-                                    value={category}
-                                    onChange={(e) => setCategory(e.target.value)}
+                                    value={categoryId}
+                                    onChange={(e) => setCategoryId(Number(e.target.value))}
                                     className="w-full appearance-none rounded-xl border-none bg-secondary px-4 py-4 font-medium text-foreground focus:ring-2 focus:ring-primary"
                                 >
-                                    {categories.map((cat) => (
-                                        <option key={cat.value} value={cat.value}>
-                                            {cat.label}
+                                    {filteredCategories.map((cat) => (
+                                        <option key={cat.id} value={cat.id}>
+                                            {cat.name}
                                         </option>
                                     ))}
                                 </select>

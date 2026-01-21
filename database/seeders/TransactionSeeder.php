@@ -92,7 +92,6 @@ class TransactionSeeder extends Seeder
                 'amount' => rand(5000000, 15000000),
                 'note' => 'Gaji bulanan',
                 'transaction_date' => $salaryDate->format('Y-m-d'),
-                'spending_type' => null,
             ]);
         }
 
@@ -107,7 +106,6 @@ class TransactionSeeder extends Seeder
                     'amount' => rand(500000, 3000000),
                     'note' => 'Project freelance',
                     'transaction_date' => $freelanceDate->format('Y-m-d'),
-                    'spending_type' => null,
                 ]);
             }
         }
@@ -119,15 +117,12 @@ class TransactionSeeder extends Seeder
     private function createDailyExpenses(User $user, $categories, Carbon $date): void
     {
         $expenses = [
-            // Need expenses
-            ['category' => 'Makanan', 'min' => 25000, 'max' => 100000, 'type' => 'need', 'notes' => ['Makan siang', 'Makan malam', 'Sarapan', 'Kopi pagi']],
-            ['category' => 'Transportasi', 'min' => 10000, 'max' => 50000, 'type' => 'need', 'notes' => ['Grab', 'Gojek', 'Bensin', 'Parkir']],
-            ['category' => 'Tagihan', 'min' => 100000, 'max' => 500000, 'type' => 'need', 'notes' => ['Listrik', 'Internet', 'Air', 'Pulsa'], 'chance' => 10],
-            ['category' => 'Kesehatan', 'min' => 50000, 'max' => 300000, 'type' => 'need', 'notes' => ['Obat', 'Vitamin', 'Dokter'], 'chance' => 15],
-            
-            // Want expenses
-            ['category' => 'Hiburan', 'min' => 50000, 'max' => 200000, 'type' => 'want', 'notes' => ['Nonton bioskop', 'Netflix', 'Spotify', 'Game'], 'chance' => 30],
-            ['category' => 'Belanja', 'min' => 50000, 'max' => 500000, 'type' => 'want', 'notes' => ['Baju baru', 'Gadget', 'Aksesoris', 'Skincare'], 'chance' => 25],
+            ['category' => 'Makanan', 'min' => 25000, 'max' => 100000, 'notes' => ['Makan siang', 'Makan malam', 'Sarapan', 'Kopi pagi']],
+            ['category' => 'Transportasi', 'min' => 10000, 'max' => 50000, 'notes' => ['Grab', 'Gojek', 'Bensin', 'Parkir']],
+            ['category' => 'Tagihan', 'min' => 100000, 'max' => 500000, 'notes' => ['Listrik', 'Internet', 'Air', 'Pulsa'], 'chance' => 10],
+            ['category' => 'Kesehatan', 'min' => 50000, 'max' => 300000, 'notes' => ['Obat', 'Vitamin', 'Dokter'], 'chance' => 15],
+            ['category' => 'Hiburan', 'min' => 50000, 'max' => 200000, 'notes' => ['Nonton bioskop', 'Netflix', 'Spotify', 'Game'], 'chance' => 30],
+            ['category' => 'Belanja', 'min' => 50000, 'max' => 500000, 'notes' => ['Baju baru', 'Gadget', 'Aksesoris', 'Skincare'], 'chance' => 25],
         ];
 
         foreach ($expenses as $expense) {
@@ -141,7 +136,6 @@ class TransactionSeeder extends Seeder
                     'amount' => rand($expense['min'], $expense['max']),
                     'note' => $expense['notes'][array_rand($expense['notes'])],
                     'transaction_date' => $date->format('Y-m-d'),
-                    'spending_type' => $expense['type'],
                 ]);
             }
         }

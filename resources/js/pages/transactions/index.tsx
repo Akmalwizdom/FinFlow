@@ -103,6 +103,7 @@ export default function TransactionsPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [dateFilter, setDateFilter] = useState('this-month');
     const [typeFilter, setTypeFilter] = useState<'income' | 'expense' | undefined>(undefined);
+    const [categoryFilter, setCategoryFilter] = useState<number | undefined>(undefined);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSheetOpen, setIsSheetOpen] = useState(false);
 
@@ -129,6 +130,7 @@ export default function TransactionsPage() {
                 page: pageNum,
                 per_page: 20,
                 type: typeFilter,
+                category_id: categoryFilter,
                 ...dateRange,
             });
 
@@ -195,7 +197,7 @@ export default function TransactionsPage() {
             setPage(1);
             fetchTransactions(1);
         }
-    }, [dateFilter, typeFilter, searchQuery]);
+    }, [dateFilter, typeFilter, categoryFilter, searchQuery]);
 
     const handleLoadMore = () => {
         const nextPage = page + 1;
@@ -206,21 +208,17 @@ export default function TransactionsPage() {
     const handleSaveTransaction = async (data: {
         type: 'income' | 'expense';
         amount: number;
-        category: string;
+        category_id: number;
         note?: string;
         date: string;
     }) => {
         try {
-            const category = categories.find((c) => c.name === data.category);
-            if (!category) return;
-
             await transactionsApi.create({
-                category_id: category.id,
+                category_id: data.category_id,
                 type: data.type,
                 amount: data.amount,
                 note: data.note,
                 transaction_date: data.date,
-                spending_type: data.type === 'expense' ? 'need' : undefined,
             });
 
             // Refresh transactions
@@ -229,6 +227,7 @@ export default function TransactionsPage() {
             setIsSheetOpen(false);
         } catch (error) {
             console.error('Failed to save transaction:', error);
+            alert('Failed to save transaction. Please try again.');
         }
     };
 
@@ -278,6 +277,11 @@ export default function TransactionsPage() {
                         onSearchChange={setSearchQuery}
                         dateFilter={dateFilter}
                         onDateFilterChange={setDateFilter}
+                        typeFilter={typeFilter}
+                        onTypeFilterChange={setTypeFilter}
+                        categories={categories}
+                        categoryFilter={categoryFilter}
+                        onCategoryFilterChange={setCategoryFilter}
                     />
                 </div>
 
@@ -315,6 +319,7 @@ export default function TransactionsPage() {
             <AddTransactionModal
                 open={isModalOpen}
                 onOpenChange={setIsModalOpen}
+                categories={categories}
                 onSave={handleSaveTransaction}
             />
 
@@ -322,6 +327,7 @@ export default function TransactionsPage() {
             <QuickAddSheet
                 open={isSheetOpen}
                 onOpenChange={setIsSheetOpen}
+                categories={categories}
                 onSave={handleSaveTransaction}
             />
         </AppLayout>

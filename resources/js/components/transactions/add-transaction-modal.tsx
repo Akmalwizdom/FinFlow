@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Check, ChevronDown, Lock, Notebook, Tag, X, Calendar } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Check, ChevronDown, Lock, Notebook, Tag, X } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -8,59 +8,61 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { type Category } from '@/lib/api';
 
 interface AddTransactionModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    categories: Category[];
     onSave?: (transaction: TransactionFormData) => void;
 }
 
 export interface TransactionFormData {
     type: 'expense' | 'income';
     amount: number;
-    category: string;
+    category_id: number;
     note?: string;
     date: string;
 }
 
-const categories = [
-    { value: 'Makanan', label: 'Makanan' },
-    { value: 'Transportasi', label: 'Transportasi' },
-    { value: 'Belanja', label: 'Belanja' },
-    { value: 'Tagihan', label: 'Tagihan' },
-    { value: 'Hiburan', label: 'Hiburan' },
-    { value: 'Kesehatan', label: 'Kesehatan' },
-    { value: 'Gaji', label: 'Gaji' },
-    { value: 'Freelance', label: 'Freelance' },
-    { value: 'Lainnya', label: 'Lainnya' },
-];
-
 export function AddTransactionModal({
     open,
     onOpenChange,
+    categories,
     onSave,
 }: AddTransactionModalProps) {
     const [type, setType] = useState<'expense' | 'income'>('expense');
     const [amount, setAmount] = useState('');
-    const [category, setCategory] = useState('');
+    const [categoryId, setCategoryId] = useState<number | ''>('');
     const [note, setNote] = useState('');
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
 
+    // Filter categories by selected type
+    const filteredCategories = useMemo(() => {
+        return categories.filter((cat) => cat.type === type);
+    }, [categories, type]);
+
+    // Reset category when type changes
+    const handleTypeChange = (newType: 'expense' | 'income') => {
+        setType(newType);
+        setCategoryId('');
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!amount || !category) return;
+        if (!amount || !categoryId) return;
 
         onSave?.({
             type,
             amount: parseFloat(amount),
-            category,
+            category_id: categoryId as number,
             note: note || undefined,
             date,
         });
 
         // Reset form
         setAmount('');
-        setCategory('');
+        setCategoryId('');
         setNote('');
         setDate(new Date().toISOString().split('T')[0]);
         onOpenChange(false);
@@ -93,6 +95,7 @@ export function AddTransactionModal({
                                         ? 'bg-card text-primary shadow-sm'
                                         : 'text-muted-foreground'
                                 }`}
+                                onClick={() => handleTypeChange('expense')}
                             >
                                 <span>Expense</span>
                                 <input
@@ -100,7 +103,7 @@ export function AddTransactionModal({
                                     name="type"
                                     value="expense"
                                     checked={type === 'expense'}
-                                    onChange={() => setType('expense')}
+                                    onChange={() => handleTypeChange('expense')}
                                     className="invisible w-0"
                                 />
                             </label>
@@ -110,6 +113,7 @@ export function AddTransactionModal({
                                         ? 'bg-card text-income shadow-sm'
                                         : 'text-muted-foreground'
                                 }`}
+                                onClick={() => handleTypeChange('income')}
                             >
                                 <span>Income</span>
                                 <input
@@ -117,7 +121,7 @@ export function AddTransactionModal({
                                     name="type"
                                     value="income"
                                     checked={type === 'income'}
-                                    onChange={() => setType('income')}
+                                    onChange={() => handleTypeChange('income')}
                                     className="invisible w-0"
                                 />
                             </label>
@@ -152,16 +156,16 @@ export function AddTransactionModal({
                             <div className="relative">
                                 <Tag className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
                                 <select
-                                    value={category}
-                                    onChange={(e) => setCategory(e.target.value)}
+                                    value={categoryId}
+                                    onChange={(e) => setCategoryId(Number(e.target.value))}
                                     className="h-14 w-full cursor-pointer appearance-none rounded-xl border border-border bg-card pl-12 pr-10 text-base font-medium focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                                 >
                                     <option value="" disabled>
                                         Select category
                                     </option>
-                                    {categories.map((cat) => (
-                                        <option key={cat.value} value={cat.value}>
-                                            {cat.label}
+                                    {filteredCategories.map((cat) => (
+                                        <option key={cat.id} value={cat.id}>
+                                            {cat.name}
                                         </option>
                                     ))}
                                 </select>
