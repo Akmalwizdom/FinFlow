@@ -1,25 +1,41 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import {
     BarChart3,
+    ChevronRight,
     CreditCard,
+    KeyRound,
     LayoutGrid,
+    Palette,
     PiggyBank,
     Plus,
     Receipt,
     Settings,
+    Shield,
+    Sliders,
+    User,
 } from 'lucide-react';
 
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Button } from '@/components/ui/button';
 import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
+    SidebarGroup,
+    SidebarGroupLabel,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarMenuSub,
+    SidebarMenuSubButton,
+    SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
@@ -54,15 +70,33 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
-const settingsNavItems: NavItem[] = [
+const settingsSubItems = [
     {
-        title: 'Settings',
-        href: '/settings',
-        icon: Settings,
+        title: 'App Settings',
+        href: '/settings/app',
+        icon: Sliders,
+    },
+    {
+        title: 'Profile',
+        href: '/settings/profile',
+        icon: User,
+    },
+    {
+        title: 'Security',
+        href: '/settings/password',
+        icon: KeyRound,
+    },
+    {
+        title: 'Appearance',
+        href: '/settings/appearance',
+        icon: Palette,
     },
 ];
 
 export function AppSidebar() {
+    const { url } = usePage();
+    const isSettingsActive = url.startsWith('/settings');
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -78,11 +112,66 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <SidebarGroup className="px-2 py-0">
+                    <SidebarGroupLabel>Platform</SidebarGroupLabel>
+                    <SidebarMenu>
+                        {/* Main Navigation Items */}
+                        {mainNavItems.map((item) => (
+                            <SidebarMenuItem key={item.title}>
+                                <SidebarMenuButton
+                                    asChild
+                                    isActive={url === item.href}
+                                    tooltip={{ children: item.title }}
+                                >
+                                    <Link href={item.href} prefetch>
+                                        {item.icon && <item.icon />}
+                                        <span>{item.title}</span>
+                                    </Link>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        ))}
+
+                        {/* Settings with Submenu */}
+                        <Collapsible
+                            asChild
+                            defaultOpen={isSettingsActive}
+                            className="group/collapsible"
+                        >
+                            <SidebarMenuItem>
+                                <CollapsibleTrigger asChild>
+                                    <SidebarMenuButton
+                                        tooltip="Settings"
+                                        isActive={isSettingsActive}
+                                    >
+                                        <Settings />
+                                        <span>Settings</span>
+                                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                    </SidebarMenuButton>
+                                </CollapsibleTrigger>
+                                <CollapsibleContent>
+                                    <SidebarMenuSub>
+                                        {settingsSubItems.map((item) => (
+                                            <SidebarMenuSubItem key={item.title}>
+                                                <SidebarMenuSubButton
+                                                    asChild
+                                                    isActive={url === item.href}
+                                                >
+                                                    <Link href={item.href}>
+                                                        <item.icon className="size-4" />
+                                                        <span>{item.title}</span>
+                                                    </Link>
+                                                </SidebarMenuSubButton>
+                                            </SidebarMenuSubItem>
+                                        ))}
+                                    </SidebarMenuSub>
+                                </CollapsibleContent>
+                            </SidebarMenuItem>
+                        </Collapsible>
+                    </SidebarMenu>
+                </SidebarGroup>
             </SidebarContent>
 
             <SidebarFooter className="gap-3">
-                <NavMain items={settingsNavItems} />
                 <NavUser />
                 <Button className="w-full gap-2 rounded-xl font-bold">
                     <Plus className="size-4" />
@@ -92,3 +181,4 @@ export function AppSidebar() {
         </Sidebar>
     );
 }
+
