@@ -29,15 +29,15 @@ class CategorySeeder extends Seeder
             ['name' => 'Investasi', 'type' => 'income', 'color' => '#34d399', 'is_default' => true],
             ['name' => 'Lainnya', 'type' => 'income', 'color' => '#6ee7b7', 'is_default' => true],
 
-            // Expense categories
-            ['name' => 'Makanan', 'type' => 'expense', 'color' => '#e73108', 'is_default' => true],
-            ['name' => 'Transportasi', 'type' => 'expense', 'color' => '#f97316', 'is_default' => true],
-            ['name' => 'Belanja', 'type' => 'expense', 'color' => '#fb923c', 'is_default' => true],
-            ['name' => 'Hiburan', 'type' => 'expense', 'color' => '#c2410c', 'is_default' => true],
-            ['name' => 'Tagihan', 'type' => 'expense', 'color' => '#dc2626', 'is_default' => true],
-            ['name' => 'Kesehatan', 'type' => 'expense', 'color' => '#ef4444', 'is_default' => true],
-            ['name' => 'Pendidikan', 'type' => 'expense', 'color' => '#f87171', 'is_default' => true],
-            ['name' => 'Lainnya', 'type' => 'expense', 'color' => '#fca5a5', 'is_default' => true],
+            // Expense categories - Using FinFlow teal color palette
+            ['name' => 'Makanan', 'type' => 'expense', 'color' => '#007180', 'is_default' => true],
+            ['name' => 'Transportasi', 'type' => 'expense', 'color' => '#4db6ac', 'is_default' => true],
+            ['name' => 'Belanja', 'type' => 'expense', 'color' => '#80cbc4', 'is_default' => true],
+            ['name' => 'Hiburan', 'type' => 'expense', 'color' => '#009688', 'is_default' => true],
+            ['name' => 'Tagihan', 'type' => 'expense', 'color' => '#26a69a', 'is_default' => true],
+            ['name' => 'Kesehatan', 'type' => 'expense', 'color' => '#00897b', 'is_default' => true],
+            ['name' => 'Pendidikan', 'type' => 'expense', 'color' => '#b2dfdb', 'is_default' => true],
+            ['name' => 'Lainnya', 'type' => 'expense', 'color' => '#e0f2f1', 'is_default' => true],
         ];
 
         foreach ($users as $user) {
