@@ -26,7 +26,7 @@ class BudgetFactory extends Factory
             'category_id' => Category::factory()->state(['type' => 'expense']),
             'name' => fake()->randomElement(['Food', 'Entertainment', 'Transport', 'Shopping', 'Bills']) . ' Budget',
             'amount' => fake()->randomElement([500000, 1000000, 2000000, 3000000, 5000000]),
-            'period' => fake()->randomElement(Budget::PERIODS),
+            'period' => fake()->randomElement(array_keys(Budget::PERIODS)),
             'start_date' => now()->startOfMonth(),
             'end_date' => null,
             'alert_threshold' => fake()->randomElement([70, 80, 90]),

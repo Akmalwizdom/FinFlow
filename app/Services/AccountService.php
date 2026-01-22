@@ -122,16 +122,34 @@ class AccountService
      */
     protected function getTransferCategoryId(int $userId, string $type): int
     {
-        $categoryName = $type === 'expense' ? 'Lainnya' : 'Lainnya';
-
+        // Try to find existing 'Transfer' category
         $category = \App\Models\Category::where('user_id', $userId)
             ->where('type', $type)
-            ->where('name', $categoryName)
+            ->where('name', 'Transfer')
             ->first();
 
-        return $category?->id ?? \App\Models\Category::where('user_id', $userId)
+        if ($category) {
+            return $category->id;
+        }
+
+        // Try to find any existing category of this type
+        $category = \App\Models\Category::where('user_id', $userId)
             ->where('type', $type)
-            ->first()
-            ->id;
+            ->first();
+
+        if ($category) {
+            return $category->id;
+        }
+
+        // Create a Transfer category if none exists
+        $category = \App\Models\Category::create([
+            'user_id' => $userId,
+            'name' => 'Transfer',
+            'type' => $type,
+            'color' => $type === 'expense' ? '#6B7280' : '#10B981',
+            'is_default' => false,
+        ]);
+
+        return $category->id;
     }
 }

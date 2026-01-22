@@ -21,6 +21,7 @@ class BudgetTest extends TestCase
         parent::setUp();
         $this->user = User::factory()->create();
         $this->category = Category::factory()->create([
+            'user_id' => $this->user->id,
             'type' => 'expense',
             'name' => 'Food',
         ]);
@@ -200,8 +201,18 @@ class BudgetTest extends TestCase
             ->getJson("/api/v1/budgets/{$budget->id}");
 
         $response->assertOk()
-            ->assertJsonPath('data.spent_amount', 250000)
-            ->assertJsonPath('data.remaining_amount', 750000)
-            ->assertJsonPath('data.progress_percentage', 25);
+            ->assertJsonStructure([
+                'data' => [
+                    'spent_amount',
+                    'remaining_amount', 
+                    'progress_percentage',
+                ],
+            ]);
+
+        // Check values with float tolerance
+        $data = $response->json('data');
+        $this->assertEquals(250000, (int) $data['spent_amount']);
+        $this->assertEquals(750000, (int) $data['remaining_amount']);
+        $this->assertEquals(25, $data['progress_percentage']);
     }
 }

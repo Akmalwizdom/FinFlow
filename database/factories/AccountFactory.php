@@ -23,7 +23,7 @@ class AccountFactory extends Factory
         return [
             'user_id' => User::factory(),
             'name' => fake()->randomElement(['BCA', 'Mandiri', 'BNI', 'GoPay', 'OVO', 'Cash']) . ' ' . fake()->word(),
-            'type' => fake()->randomElement(Account::TYPES),
+            'type' => fake()->randomElement(array_keys(Account::TYPES)),
             'initial_balance' => fake()->numberBetween(0, 10000000),
             'currency' => 'IDR',
             'icon' => null,
