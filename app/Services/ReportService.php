@@ -156,10 +156,10 @@ class ReportService
             ->where('transactions.user_id', $userId)
             ->where('transactions.type', 'expense')
             ->whereRaw("DATE_FORMAT(transaction_date, '%Y-%m') = ?", [$month])
-            ->groupBy('categories.id', 'categories.name', 'categories.color')
+            ->groupBy('categories.name')
             ->select(
                 'categories.name as category',
-                'categories.color',
+                DB::raw('MAX(categories.color) as color'),
                 DB::raw('SUM(transactions.amount) as amount')
             )
             ->orderByDesc('amount')
