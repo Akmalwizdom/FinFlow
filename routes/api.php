@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExportController;
@@ -26,6 +28,14 @@ Route::middleware(['auth:web'])->prefix('v1')->group(function () {
     // Categories
     Route::apiResource('categories', CategoryController::class);
 
+    // Accounts
+    Route::post('accounts/transfer', [AccountController::class, 'transfer']);
+    Route::apiResource('accounts', AccountController::class);
+
+    // Budgets
+    Route::get('budgets/summary', [BudgetController::class, 'summary']);
+    Route::apiResource('budgets', BudgetController::class);
+
     // Reports
     Route::get('reports/monthly', [ReportController::class, 'monthly']);
     Route::get('reports/balance-history', [ReportController::class, 'balanceHistory']);
@@ -47,6 +57,7 @@ Route::middleware(['auth:web'])->prefix('v1')->group(function () {
     Route::put('settings/password', [SettingsController::class, 'changePassword']);
     Route::delete('settings/account', [SettingsController::class, 'destroy']);
 });
+
 
 
 

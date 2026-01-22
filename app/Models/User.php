@@ -77,6 +77,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the accounts for the user.
+     */
+    public function accounts(): HasMany
+    {
+        return $this->hasMany(Account::class);
+    }
+
+    /**
+     * Get the budgets for the user.
+     */
+    public function budgets(): HasMany
+    {
+        return $this->hasMany(Budget::class);
+    }
+
+    /**
      * Boot the model.
      */
     protected static function booted(): void

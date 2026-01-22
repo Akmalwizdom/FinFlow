@@ -29,7 +29,60 @@ export interface Transaction {
     transaction_date: string;
     spending_type: 'need' | 'want' | null;
     category: Category;
+    account_id?: number;
     created_at: string;
+}
+
+export interface Account {
+    id: number;
+    name: string;
+    type: 'bank' | 'ewallet' | 'cash' | 'investment' | 'credit_card' | 'other';
+    type_label: string;
+    initial_balance: number;
+    current_balance: number;
+    currency: string;
+    icon: string | null;
+    color: string | null;
+    is_active: boolean;
+    transaction_count?: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Budget {
+    id: number;
+    name: string;
+    amount: number;
+    spent_amount: number;
+    remaining_amount: number;
+    progress_percentage: number;
+    period: 'weekly' | 'monthly' | 'yearly';
+    period_label: string;
+    start_date: string;
+    end_date: string | null;
+    alert_threshold: number;
+    is_over_threshold: boolean;
+    is_exceeded: boolean;
+    days_remaining: number;
+    is_active: boolean;
+    category?: {
+        id: number;
+        name: string;
+        color: string | null;
+    } | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface BudgetSummary {
+    total_budget_amount: number;
+    total_spent_amount: number;
+    total_remaining: number;
+    overall_progress: number;
+    budget_count: number;
+    over_budget_count: number;
+    near_limit_count: number;
+    on_track_count: number;
 }
 
 export interface DashboardSummary {
@@ -138,6 +191,7 @@ export const transactionsApi = {
         per_page?: number;
         type?: 'income' | 'expense';
         category_id?: number;
+        account_id?: number;
         spending_type?: 'need' | 'want';
         start_date?: string;
         end_date?: string;
@@ -148,6 +202,7 @@ export const transactionsApi = {
 
     create: (data: {
         category_id: number;
+        account_id?: number;
         type: 'income' | 'expense';
         amount: number;
         note?: string;
@@ -157,6 +212,7 @@ export const transactionsApi = {
 
     update: (id: number, data: Partial<{
         category_id: number;
+        account_id: number;
         type: 'income' | 'expense';
         amount: number;
         note: string;
@@ -181,6 +237,81 @@ export const categoriesApi = {
         api.put<ApiResponse<Category>>(`/categories/${id}`, data),
 
     delete: (id: number) => api.delete<ApiResponse<null>>(`/categories/${id}`),
+};
+
+// Accounts API
+export const accountsApi = {
+    list: () => api.get<ApiResponse<{ items: Account[]; total_balance: number }>>('/accounts'),
+
+    get: (id: number) => api.get<ApiResponse<Account>>(`/accounts/${id}`),
+
+    create: (data: {
+        name: string;
+        type: Account['type'];
+        initial_balance?: number;
+        currency?: string;
+        icon?: string;
+        color?: string;
+        is_active?: boolean;
+    }) => api.post<ApiResponse<Account>>('/accounts', data),
+
+    update: (id: number, data: Partial<{
+        name: string;
+        type: Account['type'];
+        initial_balance: number;
+        currency: string;
+        icon: string;
+        color: string;
+        is_active: boolean;
+    }>) => api.put<ApiResponse<Account>>(`/accounts/${id}`, data),
+
+    delete: (id: number) => api.delete<ApiResponse<null>>(`/accounts/${id}`),
+
+    transfer: (data: {
+        from_account_id: number;
+        to_account_id: number;
+        amount: number;
+        note?: string;
+        transaction_date?: string;
+    }) => api.post<ApiResponse<{
+        expense_transaction: Transaction;
+        income_transaction: Transaction;
+        from_account_new_balance: number;
+        to_account_new_balance: number;
+    }>>('/accounts/transfer', data),
+};
+
+// Budgets API
+export const budgetsApi = {
+    list: () => api.get<ApiResponse<{ items: Budget[]; summary: BudgetSummary }>>('/budgets'),
+
+    get: (id: number) => api.get<ApiResponse<Budget>>(`/budgets/${id}`),
+
+    create: (data: {
+        name: string;
+        amount: number;
+        period: Budget['period'];
+        start_date: string;
+        category_id?: number;
+        end_date?: string;
+        alert_threshold?: number;
+        is_active?: boolean;
+    }) => api.post<ApiResponse<Budget>>('/budgets', data),
+
+    update: (id: number, data: Partial<{
+        name: string;
+        amount: number;
+        category_id: number;
+        period: Budget['period'];
+        start_date: string;
+        end_date: string;
+        alert_threshold: number;
+        is_active: boolean;
+    }>) => api.put<ApiResponse<Budget>>(`/budgets/${id}`, data),
+
+    delete: (id: number) => api.delete<ApiResponse<null>>(`/budgets/${id}`),
+
+    summary: () => api.get<ApiResponse<BudgetSummary>>('/budgets/summary'),
 };
 
 // Reports API
@@ -231,3 +362,4 @@ export const settingsApi = {
 };
 
 export default api;
+

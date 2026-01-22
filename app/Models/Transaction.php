@@ -14,6 +14,7 @@ class Transaction extends Model
     protected $fillable = [
         'user_id',
         'category_id',
+        'account_id',
         'type',
         'amount',
         'note',
@@ -42,6 +43,14 @@ class Transaction extends Model
     }
 
     /**
+     * Get the account of the transaction.
+     */
+    public function account(): BelongsTo
+    {
+        return $this->belongsTo(Account::class);
+    }
+
+    /**
      * Get the tags for the transaction.
      */
     public function tags(): BelongsToMany
@@ -65,3 +74,4 @@ class Transaction extends Model
         return $query->where('type', 'expense');
     }
 }
+

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\BudgetController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -19,9 +21,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('transactions/index');
     })->name('transactions');
 
+    Route::get('accounts', [AccountController::class, 'index'])->name('accounts');
+    Route::get('budgets', [BudgetController::class, 'index'])->name('budgets');
+
     Route::get('reports', function () {
         return Inertia::render('reports/index');
     })->name('reports');
 });
 
 require __DIR__.'/settings.php';
+
