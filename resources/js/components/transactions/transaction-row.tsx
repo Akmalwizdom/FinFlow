@@ -67,7 +67,7 @@ export function TransactionRow({ transaction, onClick }: TransactionRowProps) {
                         {transaction.description}
                     </h4>
                     <p className="mt-0.5 text-xs font-medium text-muted-foreground">
-                        {transaction.notes || transaction.category} •{' '}
+                        {transaction.notes && <>{transaction.notes} • </>}
                         {transaction.category}
                     </p>
                 </div>
