@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Check, ChevronDown, Lock, Notebook, Tag, X } from 'lucide-react';
+import { Check, ChevronDown, Lock, Notebook, Tag } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -72,17 +72,9 @@ export function AddTransactionModal({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-[520px] gap-0 overflow-hidden rounded-xl p-0">
                 <DialogHeader className="px-8 pb-4 pt-8">
-                    <div className="flex items-center justify-between">
-                        <DialogTitle className="text-2xl font-bold tracking-tight">
-                            Add Transaction
-                        </DialogTitle>
-                        <button
-                            onClick={() => onOpenChange(false)}
-                            className="text-muted-foreground transition-colors hover:text-foreground"
-                        >
-                            <X className="size-5" />
-                        </button>
-                    </div>
+                    <DialogTitle className="text-2xl font-bold tracking-tight">
+                        Add Transaction
+                    </DialogTitle>
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="px-8 pb-8">
