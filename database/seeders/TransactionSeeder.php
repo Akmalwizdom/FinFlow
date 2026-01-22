@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Account;
 use App\Models\Category;
 use App\Models\Transaction;
 use App\Models\User;
@@ -35,31 +36,32 @@ class TransactionSeeder extends Seeder
     private function seedTransactionsForUser(User $user): void
     {
         $categories = $user->categories()->get()->keyBy('name');
+        $accounts = $user->accounts()->where('is_active', true)->get();
 
         // Current month transactions
         $currentMonth = Carbon::now();
-        $this->createMonthlyTransactions($user, $categories, $currentMonth);
+        $this->createMonthlyTransactions($user, $categories, $accounts, $currentMonth);
 
         // Previous month transactions
         $previousMonth = Carbon::now()->subMonth();
-        $this->createMonthlyTransactions($user, $categories, $previousMonth);
+        $this->createMonthlyTransactions($user, $categories, $accounts, $previousMonth);
 
         // Two months ago
         $twoMonthsAgo = Carbon::now()->subMonths(2);
-        $this->createMonthlyTransactions($user, $categories, $twoMonthsAgo);
+        $this->createMonthlyTransactions($user, $categories, $accounts, $twoMonthsAgo);
     }
 
     /**
      * Create transactions for a specific month.
      */
-    private function createMonthlyTransactions(User $user, $categories, Carbon $month): void
+    private function createMonthlyTransactions(User $user, $categories, $accounts, Carbon $month): void
     {
         $startOfMonth = $month->copy()->startOfMonth();
         $endOfMonth = $month->copy()->endOfMonth();
         $daysInMonth = $month->daysInMonth;
 
         // Income transactions (1-2 per month)
-        $this->createIncomeTransactions($user, $categories, $startOfMonth);
+        $this->createIncomeTransactions($user, $categories, $accounts, $startOfMonth);
 
         // Expense transactions (multiple per month)
         for ($day = 1; $day <= min($daysInMonth, Carbon::now()->day); $day++) {
@@ -72,7 +74,7 @@ class TransactionSeeder extends Seeder
 
             // Random chance to have transactions on this day (70%)
             if (rand(1, 100) <= 70) {
-                $this->createDailyExpenses($user, $categories, $date);
+                $this->createDailyExpenses($user, $categories, $accounts, $date);
             }
         }
     }
@@ -80,14 +82,19 @@ class TransactionSeeder extends Seeder
     /**
      * Create income transactions.
      */
-    private function createIncomeTransactions(User $user, $categories, Carbon $startOfMonth): void
+    private function createIncomeTransactions(User $user, $categories, $accounts, Carbon $startOfMonth): void
     {
+        // Get bank accounts for salary deposits
+        $bankAccounts = $accounts->where('type', 'bank');
+        $defaultAccount = $bankAccounts->first() ?? $accounts->first();
+
         // Salary on day 25
         $salaryDate = $startOfMonth->copy()->addDays(24);
         if (!$salaryDate->isFuture() && isset($categories['Gaji'])) {
             Transaction::create([
                 'user_id' => $user->id,
                 'category_id' => $categories['Gaji']->id,
+                'account_id' => $defaultAccount?->id,
                 'type' => 'income',
                 'amount' => rand(5000000, 15000000),
                 'note' => 'Gaji bulanan',
@@ -99,9 +106,13 @@ class TransactionSeeder extends Seeder
         if (isset($categories['Freelance'])) {
             $freelanceDate = $startOfMonth->copy()->addDays(rand(5, 20));
             if (!$freelanceDate->isFuture()) {
+                // Freelance might go to e-wallet
+                $ewalletAccounts = $accounts->whereIn('type', ['ewallet', 'bank']);
+                $freelanceAccount = $ewalletAccounts->isNotEmpty() ? $ewalletAccounts->random() : $defaultAccount;
                 Transaction::create([
                     'user_id' => $user->id,
                     'category_id' => $categories['Freelance']->id,
+                    'account_id' => $freelanceAccount?->id,
                     'type' => 'income',
                     'amount' => rand(500000, 3000000),
                     'note' => 'Project freelance',
@@ -114,7 +125,7 @@ class TransactionSeeder extends Seeder
     /**
      * Create daily expense transactions.
      */
-    private function createDailyExpenses(User $user, $categories, Carbon $date): void
+    private function createDailyExpenses(User $user, $categories, $accounts, Carbon $date): void
     {
         $expenses = [
             ['category' => 'Makanan', 'min' => 25000, 'max' => 100000, 'notes' => ['Makan siang', 'Makan malam', 'Sarapan', 'Kopi pagi']],
@@ -129,9 +140,12 @@ class TransactionSeeder extends Seeder
             $chance = $expense['chance'] ?? 60;
             
             if (rand(1, 100) <= $chance && isset($categories[$expense['category']])) {
+                // Pick random account for expense
+                $randomAccount = $accounts->isNotEmpty() ? $accounts->random() : null;
                 Transaction::create([
                     'user_id' => $user->id,
                     'category_id' => $categories[$expense['category']]->id,
+                    'account_id' => $randomAccount?->id,
                     'type' => 'expense',
                     'amount' => rand($expense['min'], $expense['max']),
                     'note' => $expense['notes'][array_rand($expense['notes'])],
