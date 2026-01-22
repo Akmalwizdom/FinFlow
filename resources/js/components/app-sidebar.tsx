@@ -1,4 +1,4 @@
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
 import {
     BarChart3,
     ChevronRight,
@@ -10,14 +10,15 @@ import {
     Plus,
     Receipt,
     Settings,
-    Shield,
     Sliders,
     User,
 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
-import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
+import { AddTransactionModal, type TransactionFormData } from '@/components/transactions/add-transaction-modal';
 import { Button } from '@/components/ui/button';
+import { categoriesApi, transactionsApi, type Category } from '@/lib/api';
 import {
     Collapsible,
     CollapsibleContent,
@@ -96,8 +97,39 @@ const settingsSubItems = [
 export function AppSidebar() {
     const { url } = usePage();
     const isSettingsActive = url.startsWith('/settings');
+    
+    // Add Transaction modal state
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [categories, setCategories] = useState<Category[]>([]);
+    
+    // Fetch categories when modal opens
+    useEffect(() => {
+        if (isModalOpen && categories.length === 0) {
+            categoriesApi.list().then((res) => {
+                setCategories(res.data.data);
+            }).catch(console.error);
+        }
+    }, [isModalOpen, categories.length]);
+    
+    // Handle save transaction
+    const handleSaveTransaction = async (data: TransactionFormData) => {
+        try {
+            await transactionsApi.create({
+                category_id: data.category_id,
+                type: data.type,
+                amount: data.amount,
+                note: data.note,
+                transaction_date: data.date,
+            });
+            // Refresh the page to show new transaction
+            router.reload();
+        } catch (error) {
+            console.error('Failed to save transaction:', error);
+        }
+    };
 
     return (
+        <>
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
                 <SidebarMenu>
@@ -173,12 +205,24 @@ export function AppSidebar() {
 
             <SidebarFooter className="gap-3">
                 <NavUser />
-                <Button className="w-full gap-2 rounded-xl font-bold">
+                <Button 
+                    className="w-full gap-2 rounded-xl font-bold"
+                    onClick={() => setIsModalOpen(true)}
+                >
                     <Plus className="size-4" />
                     <span>Add Transaction</span>
                 </Button>
             </SidebarFooter>
         </Sidebar>
+        
+        {/* Add Transaction Modal */}
+        <AddTransactionModal
+            open={isModalOpen}
+            onOpenChange={setIsModalOpen}
+            categories={categories}
+            onSave={handleSaveTransaction}
+        />
+        </>
     );
 }
 
