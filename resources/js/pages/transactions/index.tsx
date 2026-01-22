@@ -175,14 +175,18 @@ export default function TransactionsPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [, categoriesRes] = await Promise.all([
-                    fetchTransactions(1),
-                    categoriesApi.list(),
-                ]);
-
+                // Fetch categories first - this should not fail silently
+                const categoriesRes = await categoriesApi.list();
                 setCategories(categoriesRes.data.data);
             } catch (error) {
-                console.error('Failed to fetch data:', error);
+                console.error('Failed to fetch categories:', error);
+            }
+
+            try {
+                // Fetch transactions separately
+                await fetchTransactions(1);
+            } catch (error) {
+                console.error('Failed to fetch transactions:', error);
             } finally {
                 setLoading(false);
             }

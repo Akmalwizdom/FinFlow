@@ -75,5 +75,44 @@ class User extends Authenticatable
     {
         return $this->hasMany(Tag::class);
     }
+
+    /**
+     * Boot the model.
+     */
+    protected static function booted(): void
+    {
+        static::created(function (User $user) {
+            $user->createDefaultCategories();
+        });
+    }
+
+    /**
+     * Create default categories for a new user.
+     */
+    public function createDefaultCategories(): void
+    {
+        $defaultCategories = [
+            // Expense categories - Teal palette
+            ['name' => 'Makanan', 'type' => 'expense', 'color' => '#007180', 'is_default' => true],
+            ['name' => 'Transportasi', 'type' => 'expense', 'color' => '#4db6ac', 'is_default' => true],
+            ['name' => 'Belanja', 'type' => 'expense', 'color' => '#80cbc4', 'is_default' => true],
+            ['name' => 'Hiburan', 'type' => 'expense', 'color' => '#009688', 'is_default' => true],
+            ['name' => 'Tagihan', 'type' => 'expense', 'color' => '#26a69a', 'is_default' => true],
+            ['name' => 'Kesehatan', 'type' => 'expense', 'color' => '#00897b', 'is_default' => true],
+            ['name' => 'Pendidikan', 'type' => 'expense', 'color' => '#b2dfdb', 'is_default' => true],
+            ['name' => 'Lainnya', 'type' => 'expense', 'color' => '#e0f2f1', 'is_default' => true],
+
+            // Income categories - Green palette
+            ['name' => 'Gaji', 'type' => 'income', 'color' => '#2e7d32', 'is_default' => true],
+            ['name' => 'Freelance', 'type' => 'income', 'color' => '#4caf50', 'is_default' => true],
+            ['name' => 'Bonus', 'type' => 'income', 'color' => '#66bb6a', 'is_default' => true],
+            ['name' => 'Investasi', 'type' => 'income', 'color' => '#81c784', 'is_default' => true],
+            ['name' => 'Lainnya', 'type' => 'income', 'color' => '#a5d6a7', 'is_default' => true],
+        ];
+
+        foreach ($defaultCategories as $category) {
+            $this->categories()->create($category);
+        }
+    }
 }
 
