@@ -95,8 +95,8 @@ class TransactionSeeder extends Seeder
             ]);
         }
 
-        // Random freelance income (50% chance)
-        if (rand(1, 100) <= 50 && isset($categories['Freelance'])) {
+        // Always create at least one freelance income per user
+        if (isset($categories['Freelance'])) {
             $freelanceDate = $startOfMonth->copy()->addDays(rand(5, 20));
             if (!$freelanceDate->isFuture()) {
                 Transaction::create([
