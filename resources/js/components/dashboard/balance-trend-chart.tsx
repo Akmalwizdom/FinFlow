@@ -14,6 +14,44 @@ export function BalanceTrendChart({
     period = '6M',
     onPeriodChange,
 }: BalanceTrendChartProps) {
+    // Handle empty data gracefully
+    if (!data || data.length === 0) {
+        return (
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8">
+                <div className="mb-6 flex items-center justify-between md:mb-8">
+                    <div>
+                        <h3 className="text-lg font-bold text-foreground">
+                            Balance Trend
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                            Historical growth over 6 months
+                        </p>
+                    </div>
+                    <div className="flex gap-2">
+                        {(['6M', '1Y', 'ALL'] as const).map((p) => (
+                            <button
+                                key={p}
+                                onClick={() => onPeriodChange?.(p)}
+                                className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                                    period === p
+                                        ? 'bg-secondary font-bold text-foreground'
+                                        : 'text-muted-foreground hover:text-foreground'
+                                }`}
+                            >
+                                {p}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+                <div className="flex h-48 items-center justify-center md:h-64">
+                    <p className="text-sm text-muted-foreground">
+                        No balance data available yet
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
     // Calculate path for SVG
     const maxValue = Math.max(...data.map((d) => d.value));
     const minValue = Math.min(...data.map((d) => d.value));

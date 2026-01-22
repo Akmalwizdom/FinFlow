@@ -58,7 +58,7 @@ export function CategoryDonut({ categories, totalSpent }: CategoryDonutProps) {
                     {/* Category segments */}
                     {segments.map((seg, index) => (
                         <circle
-                            key={seg.name}
+                            key={`${index}-${seg.name}`}
                             cx="50"
                             cy="50"
                             r={radius}
@@ -85,9 +85,9 @@ export function CategoryDonut({ categories, totalSpent }: CategoryDonutProps) {
             </div>
 
             <div className="flex flex-1 flex-col justify-end space-y-3">
-                {categories.map((cat) => (
+                {categories.map((cat, index) => (
                     <div
-                        key={cat.name}
+                        key={`${index}-${cat.name}`}
                         className="flex items-center justify-between text-sm"
                     >
                         <div className="flex items-center gap-2">

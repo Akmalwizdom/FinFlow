@@ -133,32 +133,16 @@ class ReportService
 
     /**
      * Get need vs want ratio for a month.
+     * Note: spending_type feature is currently not in use, returning default values.
      */
     private function getNeedWantRatio(int $userId, string $month): array
     {
-        $needAmount = DB::table('transactions')
-            ->where('user_id', $userId)
-            ->where('type', 'expense')
-            ->where('spending_type', 'need')
-            ->whereRaw("DATE_FORMAT(transaction_date, '%Y-%m') = ?", [$month])
-            ->sum('amount');
-
-        $wantAmount = DB::table('transactions')
-            ->where('user_id', $userId)
-            ->where('type', 'expense')
-            ->where('spending_type', 'want')
-            ->whereRaw("DATE_FORMAT(transaction_date, '%Y-%m') = ?", [$month])
-            ->sum('amount');
-
-        $total = $needAmount + $wantAmount;
-        $needPercentage = $total > 0 ? round(($needAmount / $total) * 100) : 0;
-        $wantPercentage = $total > 0 ? round(($wantAmount / $total) * 100) : 0;
-
+        // spending_type feature is not implemented, return default values
         return [
-            'need' => (int) $needPercentage,
-            'want' => (int) $wantPercentage,
-            'need_amount' => (float) $needAmount,
-            'want_amount' => (float) $wantAmount,
+            'need' => 0,
+            'want' => 0,
+            'need_amount' => 0.0,
+            'want_amount' => 0.0,
         ];
     }
 
