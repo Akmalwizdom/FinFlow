@@ -5,16 +5,19 @@ import { useEffect, useState } from 'react';
 import {
     BalanceCards,
     BalanceTrendChart,
+    BudgetWidget,
     CategoryDonut,
     RecentTransactions,
     type Transaction as DashboardTransaction,
 } from '@/components/dashboard';
 import AppLayout from '@/layouts/app-layout';
 import {
+    budgetsApi,
     dashboardApi,
     reportsApi,
     transactionsApi,
     type BalanceHistoryItem,
+    type BudgetSummary,
     type DashboardSummary,
     type Transaction,
 } from '@/lib/api';
@@ -31,20 +34,23 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Dashboard() {
     const [loading, setLoading] = useState(true);
     const [summary, setSummary] = useState<DashboardSummary | null>(null);
+    const [budgetSummary, setBudgetSummary] = useState<BudgetSummary | null>(null);
     const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
     const [trendData, setTrendData] = useState<{ month: string; value: number }[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [summaryRes, transactionsRes, historyRes] = await Promise.all([
+                const [summaryRes, transactionsRes, historyRes, budgetRes] = await Promise.all([
                     dashboardApi.getSummary(),
                     transactionsApi.list({ per_page: 5 }),
                     reportsApi.balanceHistory(6),
+                    budgetsApi.list(),
                 ]);
 
                 setSummary(summaryRes.data.data);
                 setRecentTransactions(transactionsRes.data.data.items);
+                setBudgetSummary(budgetRes.data.data.summary);
 
                 // Transform balance history to trend data
                 const history = historyRes.data.data.map((item: BalanceHistoryItem) => ({
@@ -141,15 +147,21 @@ export default function Dashboard() {
                     />
                 </div>
 
-                {/* Recent Transactions */}
-                <RecentTransactions
-                    transactions={dashboardTransactions}
-                    onViewAll={() => {
-                        window.location.href = '/transactions';
-                    }}
-                />
+                {/* Budget Widget and Recent Transactions */}
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
+                    <div className="lg:col-span-2">
+                        <RecentTransactions
+                            transactions={dashboardTransactions}
+                            onViewAll={() => {
+                                window.location.href = '/transactions';
+                            }}
+                        />
+                    </div>
+                    <BudgetWidget summary={budgetSummary} />
+                </div>
             </div>
         </AppLayout>
     );
 }
+
 

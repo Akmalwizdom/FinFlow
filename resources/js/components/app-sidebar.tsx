@@ -116,6 +116,7 @@ export function AppSidebar() {
         try {
             await transactionsApi.create({
                 category_id: data.category_id,
+                account_id: data.account_id,
                 type: data.type,
                 amount: data.amount,
                 note: data.note,

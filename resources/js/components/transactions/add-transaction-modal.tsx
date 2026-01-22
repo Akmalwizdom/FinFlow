@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Check, ChevronDown, Lock, Notebook, Tag } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { Building2, Check, ChevronDown, CreditCard, Lock, Notebook, Smartphone, Tag, TrendingUp, Wallet } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -8,12 +8,13 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { type Category } from '@/lib/api';
+import { type Category, type Account, accountsApi } from '@/lib/api';
 
 interface AddTransactionModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     categories: Category[];
+    accounts?: Account[];
     onSave?: (transaction: TransactionFormData) => void;
 }
 
@@ -21,21 +22,50 @@ export interface TransactionFormData {
     type: 'expense' | 'income';
     amount: number;
     category_id: number;
+    account_id?: number;
     note?: string;
     date: string;
 }
+
+const ACCOUNT_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+    bank: Building2,
+    ewallet: Smartphone,
+    cash: Wallet,
+    investment: TrendingUp,
+    credit_card: CreditCard,
+    other: Wallet,
+};
 
 export function AddTransactionModal({
     open,
     onOpenChange,
     categories,
+    accounts: propAccounts,
     onSave,
 }: AddTransactionModalProps) {
     const [type, setType] = useState<'expense' | 'income'>('expense');
     const [amount, setAmount] = useState('');
     const [categoryId, setCategoryId] = useState<number | ''>('');
+    const [accountId, setAccountId] = useState<number | ''>('');
     const [note, setNote] = useState('');
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+    const [accounts, setAccounts] = useState<Account[]>(propAccounts || []);
+
+    // Fetch accounts if not provided via props
+    useEffect(() => {
+        if (open && accounts.length === 0 && !propAccounts) {
+            accountsApi.list().then((res) => {
+                setAccounts(res.data.data.items);
+            }).catch(console.error);
+        }
+    }, [open, accounts.length, propAccounts]);
+
+    // Update accounts when props change
+    useEffect(() => {
+        if (propAccounts) {
+            setAccounts(propAccounts);
+        }
+    }, [propAccounts]);
 
     // Filter categories by selected type
     const filteredCategories = useMemo(() => {
@@ -56,6 +86,7 @@ export function AddTransactionModal({
             type,
             amount: parseFloat(amount),
             category_id: categoryId as number,
+            account_id: accountId ? (accountId as number) : undefined,
             note: note || undefined,
             date,
         });
@@ -63,6 +94,7 @@ export function AddTransactionModal({
         // Reset form
         setAmount('');
         setCategoryId('');
+        setAccountId('');
         setNote('');
         setDate(new Date().toISOString().split('T')[0]);
         onOpenChange(false);
@@ -139,6 +171,31 @@ export function AddTransactionModal({
                                 />
                             </div>
                         </div>
+
+                        {/* Account Field */}
+                        {accounts.length > 0 && (
+                            <div className="flex flex-col">
+                                <p className="px-1 pb-2 text-sm font-medium uppercase tracking-wider text-muted-foreground">
+                                    Account (Optional)
+                                </p>
+                                <div className="relative">
+                                    <Wallet className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
+                                    <select
+                                        value={accountId}
+                                        onChange={(e) => setAccountId(e.target.value ? Number(e.target.value) : '')}
+                                        className="h-14 w-full cursor-pointer appearance-none rounded-xl border border-border bg-card pl-12 pr-10 text-base font-medium focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                    >
+                                        <option value="">No account selected</option>
+                                        {accounts.filter(a => a.is_active).map((account) => (
+                                            <option key={account.id} value={account.id}>
+                                                {account.name} ({account.type_label})
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <ChevronDown className="pointer-events-none absolute right-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
+                                </div>
+                            </div>
+                        )}
 
                         {/* Category Field */}
                         <div className="flex flex-col">
@@ -218,3 +275,4 @@ export function AddTransactionModal({
         </Dialog>
     );
 }
+

@@ -213,12 +213,14 @@ export default function TransactionsPage() {
         type: 'income' | 'expense';
         amount: number;
         category_id: number;
+        account_id?: number;
         note?: string;
         date: string;
     }) => {
         try {
             await transactionsApi.create({
                 category_id: data.category_id,
+                account_id: data.account_id,
                 type: data.type,
                 amount: data.amount,
                 note: data.note,
