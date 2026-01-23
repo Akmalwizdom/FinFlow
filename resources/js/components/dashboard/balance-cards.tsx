@@ -10,13 +10,7 @@ interface BalanceCardsProps {
     remainingBudget: number;
 }
 
-function formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 2,
-    }).format(amount);
-}
+import { formatRupiah } from '@/lib/utils';
 
 // Animated number component for counting effect
 function AnimatedNumber({ value, duration = 1000 }: { value: number; duration?: number }) {
@@ -49,7 +43,7 @@ function AnimatedNumber({ value, duration = 1000 }: { value: number; duration?: 
         };
     }, [value, duration]);
 
-    return <>{formatCurrency(displayValue)}</>;
+    return <>{formatRupiah(displayValue)}</>;
 }
 
 export function BalanceCards({
@@ -115,7 +109,7 @@ export function BalanceCards({
                     <AnimatedNumber value={expenses} duration={1200} />
                 </p>
                 <p className="text-xs text-muted-foreground">
-                    {formatCurrency(remainingBudget)} remaining budget
+                    {formatRupiah(remainingBudget)} remaining budget
                 </p>
             </div>
         </div>

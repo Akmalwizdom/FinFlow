@@ -4,20 +4,13 @@ import {
     TrendingUp,
     Wallet,
 } from 'lucide-react';
+import { formatRupiah } from '@/lib/utils';
 
 interface TransactionStatsProps {
     totalIn: number;
     totalOut: number;
     netFlow: number;
     avgPerDay: number;
-}
-
-function formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 2,
-    }).format(Math.abs(amount));
 }
 
 export function TransactionStats({
@@ -36,7 +29,7 @@ export function TransactionStats({
                     </p>
                 </div>
                 <p className="text-lg font-bold text-income">
-                    +{formatCurrency(totalIn)}
+                    +{formatRupiah(totalIn)}
                 </p>
             </div>
 
@@ -48,7 +41,7 @@ export function TransactionStats({
                     </p>
                 </div>
                 <p className="text-lg font-bold text-expense">
-                    -{formatCurrency(totalOut)}
+                    -{formatRupiah(totalOut)}
                 </p>
             </div>
 
@@ -61,7 +54,7 @@ export function TransactionStats({
                 </div>
                 <p className="text-lg font-bold text-primary">
                     {netFlow >= 0 ? '+' : '-'}
-                    {formatCurrency(netFlow)}
+                    {formatRupiah(Math.abs(netFlow))}
                 </p>
             </div>
 
@@ -73,7 +66,7 @@ export function TransactionStats({
                     </p>
                 </div>
                 <p className="text-lg font-bold text-foreground">
-                    {formatCurrency(avgPerDay)}
+                    {formatRupiah(avgPerDay)}
                 </p>
             </div>
         </div>

@@ -48,13 +48,7 @@ const categoryIcons: Record<string, LucideIcon> = {
     default: CreditCard,
 };
 
-function formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 2,
-    }).format(amount);
-}
+import { formatRupiah } from '@/lib/utils';
 
 export function TransactionRow({ transaction, onClick, onDelete }: TransactionRowProps) {
     const Icon =
@@ -91,7 +85,7 @@ export function TransactionRow({ transaction, onClick, onDelete }: TransactionRo
                         }`}
                     >
                         {transaction.type === 'income' ? '+' : '-'}
-                        {formatCurrency(transaction.amount)}
+                        {formatRupiah(transaction.amount)}
                     </p>
                     <p className="text-[10px] font-medium text-muted-foreground">
                         {transaction.time}

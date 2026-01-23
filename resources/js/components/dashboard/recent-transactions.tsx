@@ -6,6 +6,8 @@ import {
     Utensils,
 } from 'lucide-react';
 
+import { formatRupiah } from '@/lib/utils';
+
 export interface Transaction {
     id: number;
     description: string;
@@ -20,15 +22,6 @@ export interface Transaction {
 interface RecentTransactionsProps {
     transactions: Transaction[];
     onViewAll?: () => void;
-}
-
-function formatCurrency(amount: number): string {
-    const absAmount = Math.abs(amount);
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 2,
-    }).format(absAmount);
 }
 
 const categoryIcons: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -88,7 +81,7 @@ export function RecentTransactions({
                                     }`}
                                 >
                                     {tx.type === 'income' ? '+' : '-'}{' '}
-                                    {formatCurrency(tx.amount)}
+                                    {formatRupiah(Math.abs(tx.amount))}
                                 </p>
                                 {tx.account && (
                                     <p className="text-[10px] font-medium text-muted-foreground">

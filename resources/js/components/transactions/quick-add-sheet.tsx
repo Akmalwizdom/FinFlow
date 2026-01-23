@@ -67,10 +67,11 @@ export function QuickAddSheet({ open, onOpenChange, categories, onSave }: QuickA
 
     const formatDisplayAmount = (value: string) => {
         const num = parseFloat(value) || 0;
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat('id-ID', {
             style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 2,
+            currency: 'IDR',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
         }).format(num);
     };
 

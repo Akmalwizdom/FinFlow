@@ -91,12 +91,15 @@ class TransactionSeeder extends Seeder
         // Salary on day 25
         $salaryDate = $startOfMonth->copy()->addDays(24);
         if (!$salaryDate->isFuture() && isset($categories['Gaji'])) {
+            $rawSalary = rand(5000000, 15000000);
+            $salary = (int) (round($rawSalary / 50000) * 50000); // Round to nearest 50k
+
             Transaction::create([
                 'user_id' => $user->id,
                 'category_id' => $categories['Gaji']->id,
                 'account_id' => $defaultAccount?->id,
                 'type' => 'income',
-                'amount' => rand(5000000, 15000000),
+                'amount' => $salary,
                 'note' => 'Gaji bulanan',
                 'transaction_date' => $salaryDate->format('Y-m-d'),
             ]);
@@ -109,12 +112,16 @@ class TransactionSeeder extends Seeder
                 // Freelance might go to e-wallet
                 $ewalletAccounts = $accounts->whereIn('type', ['ewallet', 'bank']);
                 $freelanceAccount = $ewalletAccounts->isNotEmpty() ? $ewalletAccounts->random() : $defaultAccount;
+                
+                $rawFreelance = rand(500000, 3000000);
+                $freelance = (int) (round($rawFreelance / 10000) * 10000); // Round to nearest 10k
+
                 Transaction::create([
                     'user_id' => $user->id,
                     'category_id' => $categories['Freelance']->id,
                     'account_id' => $freelanceAccount?->id,
                     'type' => 'income',
-                    'amount' => rand(500000, 3000000),
+                    'amount' => $freelance,
                     'note' => 'Project freelance',
                     'transaction_date' => $freelanceDate->format('Y-m-d'),
                 ]);
@@ -142,12 +149,15 @@ class TransactionSeeder extends Seeder
             if (rand(1, 100) <= $chance && isset($categories[$expense['category']])) {
                 // Pick random account for expense
                 $randomAccount = $accounts->isNotEmpty() ? $accounts->random() : null;
+                $rawAmount = rand($expense['min'], $expense['max']);
+                $roundedAmount = (int) (round($rawAmount / 500) * 500);
+
                 Transaction::create([
                     'user_id' => $user->id,
                     'category_id' => $categories[$expense['category']]->id,
                     'account_id' => $randomAccount?->id,
                     'type' => 'expense',
-                    'amount' => rand($expense['min'], $expense['max']),
+                    'amount' => $roundedAmount,
                     'note' => $expense['notes'][array_rand($expense['notes'])],
                     'transaction_date' => $date->format('Y-m-d'),
                 ]);

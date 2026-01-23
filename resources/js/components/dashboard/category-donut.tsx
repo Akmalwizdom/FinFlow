@@ -9,14 +9,7 @@ interface CategoryDonutProps {
     totalSpent: number;
 }
 
-function formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-    }).format(amount);
-}
+import { formatRupiah } from '@/lib/utils';
 
 export function CategoryDonut({ categories, totalSpent }: CategoryDonutProps) {
     const total = categories.reduce((sum, cat) => sum + cat.amount, 0);
@@ -76,7 +69,7 @@ export function CategoryDonut({ categories, totalSpent }: CategoryDonutProps) {
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                     <span className="text-2xl font-black text-foreground">
-                        {formatCurrency(totalSpent)}
+                        {formatRupiah(totalSpent)}
                     </span>
                     <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                         Spent
@@ -100,7 +93,7 @@ export function CategoryDonut({ categories, totalSpent }: CategoryDonutProps) {
                             </span>
                         </div>
                         <span className="font-bold">
-                            {formatCurrency(cat.amount)}
+                            {formatRupiah(cat.amount)}
                         </span>
                     </div>
                 ))}
