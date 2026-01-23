@@ -10,6 +10,7 @@ import {
     Target,
     Trash2,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -27,6 +28,16 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
@@ -78,6 +89,7 @@ export default function BudgetsPage() {
     const [categories, setCategories] = useState<Category[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
+    const [budgetToDelete, setBudgetToDelete] = useState<Budget | null>(null);
     const [formData, setFormData] = useState<BudgetFormData>({
         name: '',
         amount: '',
@@ -151,24 +163,30 @@ export default function BudgetsPage() {
 
             await fetchData();
             setIsModalOpen(false);
+            toast.success(editingBudget ? 'Budget updated successfully' : 'Budget created successfully');
         } catch (error) {
             console.error('Failed to save budget:', error);
-            alert('Failed to save budget. Please try again.');
+            toast.error('Failed to save budget. Please try again.');
         } finally {
             setSaving(false);
         }
     };
 
-    const handleDelete = async (budget: Budget) => {
-        if (!confirm(`Are you sure you want to delete "${budget.name}"?`)) {
-            return;
-        }
+    const handleDelete = (budget: Budget) => {
+        setBudgetToDelete(budget);
+    };
+
+    const confirmDelete = async () => {
+        if (!budgetToDelete) return;
 
         try {
-            await budgetsApi.delete(budget.id);
+            await budgetsApi.delete(budgetToDelete.id);
             await fetchData();
+            toast.success('Budget deleted successfully');
+            setBudgetToDelete(null);
         } catch (error) {
-            alert('Failed to delete budget.');
+            console.error('Failed to delete budget:', error);
+            toast.error('Failed to delete budget');
         }
     };
 
@@ -504,6 +522,23 @@ export default function BudgetsPage() {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            <AlertDialog open={!!budgetToDelete} onOpenChange={(open) => !open && setBudgetToDelete(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will permanently delete the budget "{budgetToDelete?.name}". This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                            Delete
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </AppLayout>
     );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Head } from '@inertiajs/react';
 import { History, Loader2, Plus } from 'lucide-react';
+import { toast } from 'sonner';
 
 import {
     AddTransactionModal,
@@ -19,6 +20,16 @@ import {
     type Transaction as ApiTransaction,
 } from '@/lib/api';
 import { type BreadcrumbItem } from '@/types';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -106,6 +117,7 @@ export default function TransactionsPage() {
     const [categoryFilter, setCategoryFilter] = useState<number | undefined>(undefined);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSheetOpen, setIsSheetOpen] = useState(false);
+    const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
 
     const getDateRange = () => {
         const now = new Date();
@@ -231,11 +243,29 @@ export default function TransactionsPage() {
             await fetchTransactions(1);
             setIsModalOpen(false);
             setIsSheetOpen(false);
+            toast.success('Transaction saved successfully');
         } catch (error) {
             console.error('Failed to save transaction:', error);
-            alert('Failed to save transaction. Please try again.');
+            toast.error('Failed to save transaction. Please try again.');
         }
     };
+
+    const confirmDelete = async () => {
+        if (!transactionToDelete) return;
+
+        try {
+            await transactionsApi.delete(transactionToDelete.id);
+            toast.success('Transaction deleted successfully');
+            setTransactionToDelete(null);
+            // Refresh list
+            setPage(1);
+            fetchTransactions(1);
+        } catch (error) {
+            console.error('Failed to delete transaction:', error);
+            toast.error('Failed to delete transaction');
+        }
+    };
+
 
     if (loading) {
         return (
@@ -293,7 +323,7 @@ export default function TransactionsPage() {
 
                 {/* Transaction List */}
                 <div className="py-6">
-                    <TransactionList groups={transactionGroups} />
+                    <TransactionList groups={transactionGroups} onDelete={setTransactionToDelete} />
 
                     {/* Load More Button */}
                     {hasMore && (
@@ -336,6 +366,23 @@ export default function TransactionsPage() {
                 categories={categories}
                 onSave={handleSaveTransaction}
             />
+
+            <AlertDialog open={!!transactionToDelete} onOpenChange={(open) => !open && setTransactionToDelete(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will permanently delete this transaction. This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                            Delete
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </AppLayout>
     );
 }

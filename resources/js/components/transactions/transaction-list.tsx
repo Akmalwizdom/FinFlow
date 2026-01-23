@@ -8,11 +8,13 @@ interface TransactionGroup {
 interface TransactionListProps {
     groups: TransactionGroup[];
     onTransactionClick?: (transaction: Transaction) => void;
+    onDelete?: (transaction: Transaction) => void;
 }
 
 export function TransactionList({
     groups,
     onTransactionClick,
+    onDelete,
 }: TransactionListProps) {
     return (
         <div className="space-y-6">
@@ -33,6 +35,7 @@ export function TransactionList({
                                 key={transaction.id}
                                 transaction={transaction}
                                 onClick={onTransactionClick}
+                                onDelete={onDelete}
                             />
                         ))}
                     </div>

@@ -11,6 +11,7 @@ import {
     TrendingUp,
     Wallet,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -28,6 +29,16 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -79,6 +90,7 @@ export default function AccountsPage() {
     const [totalBalance, setTotalBalance] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingAccount, setEditingAccount] = useState<Account | null>(null);
+    const [accountToDelete, setAccountToDelete] = useState<Account | null>(null);
     const [formData, setFormData] = useState<AccountFormData>({
         name: '',
         type: 'bank',
@@ -142,25 +154,31 @@ export default function AccountsPage() {
 
             await fetchAccounts();
             setIsModalOpen(false);
+            toast.success(editingAccount ? 'Account updated successfully' : 'Account created successfully');
         } catch (error) {
             console.error('Failed to save account:', error);
-            alert('Failed to save account. Please try again.');
+            toast.error('Failed to save account. Please try again.');
         } finally {
             setSaving(false);
         }
     };
 
-    const handleDelete = async (account: Account) => {
-        if (!confirm(`Are you sure you want to delete "${account.name}"?`)) {
-            return;
-        }
+    const handleDelete = (account: Account) => {
+        setAccountToDelete(account);
+    };
+
+    const confirmDelete = async () => {
+        if (!accountToDelete) return;
 
         try {
-            await accountsApi.delete(account.id);
+            await accountsApi.delete(accountToDelete.id);
             await fetchAccounts();
+            toast.success('Account deleted successfully');
+            setAccountToDelete(null);
         } catch (error: any) {
             const message = error.response?.data?.error?.message || 'Failed to delete account.';
-            alert(message);
+            console.error('Failed to delete account:', error);
+            toast.error(message);
         }
     };
 
@@ -408,6 +426,24 @@ export default function AccountsPage() {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+
+            <AlertDialog open={!!accountToDelete} onOpenChange={(open) => !open && setAccountToDelete(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will permanently delete the account "{accountToDelete?.name}". This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                            Delete
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </AppLayout>
     );
 }

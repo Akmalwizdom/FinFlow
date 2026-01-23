@@ -1,4 +1,11 @@
-import { ChevronRight, type LucideIcon } from 'lucide-react';
+import { ChevronRight, type LucideIcon, MoreHorizontal, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
     Briefcase,
     Car,
@@ -26,6 +33,7 @@ export interface Transaction {
 interface TransactionRowProps {
     transaction: Transaction;
     onClick?: (transaction: Transaction) => void;
+    onDelete?: (transaction: Transaction) => void;
 }
 
 const categoryIcons: Record<string, LucideIcon> = {
@@ -48,7 +56,7 @@ function formatCurrency(amount: number): string {
     }).format(amount);
 }
 
-export function TransactionRow({ transaction, onClick }: TransactionRowProps) {
+export function TransactionRow({ transaction, onClick, onDelete }: TransactionRowProps) {
     const Icon =
         categoryIcons[transaction.categoryIcon || 'default'] ||
         categoryIcons.default;
@@ -89,7 +97,25 @@ export function TransactionRow({ transaction, onClick }: TransactionRowProps) {
                         {transaction.time}
                     </p>
                 </div>
-                <ChevronRight className="size-5 text-muted-foreground/30 opacity-0 transition-all group-hover:text-muted-foreground group-hover:opacity-100" />
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground opacity-0 group-hover:opacity-100">
+                            <MoreHorizontal className="size-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onDelete?.(transaction);
+                            }}
+                        >
+                            <Trash2 className="mr-2 size-4" />
+                            Delete
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </div>
     );
