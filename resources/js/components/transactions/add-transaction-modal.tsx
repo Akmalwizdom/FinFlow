@@ -102,15 +102,15 @@ export function AddTransactionModal({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-[520px] gap-0 overflow-hidden rounded-xl p-0">
-                <DialogHeader className="px-8 pb-4 pt-8">
-                    <DialogTitle className="text-2xl font-bold tracking-tight">
+            <DialogContent className="max-w-[480px] gap-0 overflow-hidden rounded-2xl p-0">
+                <DialogHeader className="px-8 pb-2 pt-6">
+                    <DialogTitle className="text-xl font-bold tracking-tight">
                         Add Transaction
                     </DialogTitle>
                 </DialogHeader>
 
-                <form onSubmit={handleSubmit} className="px-8 pb-8">
-                    <div className="space-y-6">
+                <form onSubmit={handleSubmit} className="px-8 pb-6">
+                    <div className="space-y-4">
                         {/* Type Toggle */}
                         <div className="flex h-11 items-center rounded-lg bg-secondary p-1">
                             <label
@@ -153,11 +153,11 @@ export function AddTransactionModal({
 
                         {/* Amount Field */}
                         <div className="flex flex-col">
-                            <p className="px-1 pb-2 text-sm font-medium uppercase tracking-wider text-muted-foreground">
+                            <p className="px-1 pb-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">
                                 Amount
                             </p>
                             <div className="relative flex items-center">
-                                <span className="absolute left-4 text-3xl font-light text-muted-foreground">
+                                <span className="absolute left-4 text-2xl font-light text-muted-foreground/60">
                                     $
                                 </span>
                                 <input
@@ -167,7 +167,7 @@ export function AddTransactionModal({
                                     onChange={(e) => setAmount(e.target.value)}
                                     placeholder="0.00"
                                     autoFocus
-                                    className="h-20 w-full rounded-xl border border-border bg-card pl-10 pr-4 text-4xl font-semibold tracking-tight placeholder:text-muted-foreground/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                    className="h-16 w-full rounded-xl border border-border bg-card pl-10 pr-4 text-3xl font-bold tracking-tight placeholder:text-muted-foreground/20 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
                                 />
                             </div>
                         </div>
@@ -175,15 +175,15 @@ export function AddTransactionModal({
                         {/* Account Field */}
                         {accounts.length > 0 && (
                             <div className="flex flex-col">
-                                <p className="px-1 pb-2 text-sm font-medium uppercase tracking-wider text-muted-foreground">
+                                <p className="px-1 pb-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">
                                     Account (Optional)
                                 </p>
                                 <div className="relative">
-                                    <Wallet className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
+                                    <Wallet className="absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/60" />
                                     <select
                                         value={accountId}
                                         onChange={(e) => setAccountId(e.target.value ? Number(e.target.value) : '')}
-                                        className="h-14 w-full cursor-pointer appearance-none rounded-xl border border-border bg-card pl-12 pr-10 text-base font-medium focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                        className="h-12 w-full cursor-pointer appearance-none rounded-xl border border-border bg-card pl-11 pr-10 text-sm font-medium focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
                                     >
                                         <option value="">No account selected</option>
                                         {accounts.filter(a => a.is_active).map((account) => (
@@ -199,15 +199,15 @@ export function AddTransactionModal({
 
                         {/* Category Field */}
                         <div className="flex flex-col">
-                            <p className="px-1 pb-2 text-sm font-medium uppercase tracking-wider text-muted-foreground">
+                            <p className="px-1 pb-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">
                                 Category
                             </p>
                             <div className="relative">
-                                <Tag className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
+                                <Tag className="absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/60" />
                                 <select
                                     value={categoryId}
                                     onChange={(e) => setCategoryId(Number(e.target.value))}
-                                    className="h-14 w-full cursor-pointer appearance-none rounded-xl border border-border bg-card pl-12 pr-10 text-base font-medium focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                    className="h-12 w-full cursor-pointer appearance-none rounded-xl border border-border bg-card pl-11 pr-10 text-sm font-medium focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
                                 >
                                     <option value="" disabled>
                                         Select category
@@ -224,35 +224,35 @@ export function AddTransactionModal({
 
                         {/* Notes Field */}
                         <div className="flex flex-col">
-                            <p className="px-1 pb-2 text-sm font-medium uppercase tracking-wider text-muted-foreground">
+                            <p className="px-1 pb-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">
                                 Note (Optional)
                             </p>
                             <div className="relative">
-                                <Notebook className="absolute left-4 top-4 size-5 text-muted-foreground" />
+                                <Notebook className="absolute left-4 top-3.5 size-4 text-muted-foreground/60" />
                                 <textarea
                                     value={note}
                                     onChange={(e) => setNote(e.target.value)}
                                     placeholder="What was this for?"
-                                    className="h-24 w-full resize-none rounded-xl border border-border bg-card pl-12 pr-4 pt-3.5 text-base font-normal placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                    className="h-20 w-full resize-none rounded-xl border border-border bg-card pl-11 pr-4 pt-2.5 text-sm font-normal placeholder:text-muted-foreground/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
                                 />
                             </div>
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex items-center gap-3 pt-4">
+                        <div className="flex items-center gap-3 pt-2">
                             <Button
                                 type="button"
                                 variant="outline"
                                 onClick={() => onOpenChange(false)}
-                                className="h-14 flex-1 rounded-xl font-bold"
+                                className="h-12 flex-1 rounded-xl font-bold"
                             >
                                 Cancel
                             </Button>
                             <Button
                                 type="submit"
-                                className="h-14 flex-[2] gap-2 rounded-xl font-bold shadow-lg shadow-primary/20"
+                                className="h-12 flex-[2] gap-2 rounded-xl font-bold shadow-lg shadow-primary/20"
                             >
-                                <Check className="size-5" />
+                                <Check className="size-4" />
                                 Save Transaction
                             </Button>
                         </div>
@@ -260,12 +260,12 @@ export function AddTransactionModal({
                 </form>
 
                 {/* Privacy Footer */}
-                <div className="border-t border-primary/10 bg-primary/5 px-8 py-4">
+                <div className="border-t border-primary/10 bg-primary/5 px-8 py-3">
                     <div className="flex items-center gap-3">
-                        <div className="flex size-8 items-center justify-center rounded-full bg-primary/20 text-primary">
-                            <Lock className="size-4" />
+                        <div className="flex size-7 items-center justify-center rounded-full bg-primary/20 text-primary">
+                            <Lock className="size-3.5" />
                         </div>
-                        <p className="text-xs font-medium text-primary/80">
+                        <p className="text-[10px] font-medium leading-tight text-primary/80">
                             Your transaction data is encrypted and stored locally.
                             Privacy is our priority.
                         </p>

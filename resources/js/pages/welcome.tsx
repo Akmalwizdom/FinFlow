@@ -12,20 +12,14 @@ export default function Welcome({
 
     return (
         <>
-            <Head title="Welcome">
-                <link rel="preconnect" href="https://fonts.bunny.net" />
-                <link
-                    href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600"
-                    rel="stylesheet"
-                />
-            </Head>
-            <div className="flex min-h-screen flex-col items-center bg-[#FDFDFC] p-6 text-[#1b1b18] lg:justify-center lg:p-8 dark:bg-[#0a0a0a]">
-                <header className="mb-6 w-full max-w-[335px] text-sm not-has-[nav]:hidden lg:max-w-4xl">
-                    <nav className="flex items-center justify-end gap-4">
+            <Head title="Welcome" />
+            <div className="noise-overlay gradient-mesh relative flex min-h-screen flex-col items-center p-6 text-foreground lg:justify-center lg:p-8">
+                <header className="mb-12 w-full max-w-[335px] text-sm not-has-[nav]:hidden lg:max-w-4xl">
+                    <nav className="flex items-center justify-end gap-6">
                         {auth.user ? (
                             <Link
                                 href={dashboard()}
-                                className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
+                                className="btn-hover-scale rounded-full border border-border bg-card px-6 py-2 text-sm font-bold shadow-sm transition-all hover:bg-muted"
                             >
                                 Dashboard
                             </Link>
@@ -33,32 +27,30 @@ export default function Welcome({
                             <>
                                 <Link
                                     href={login()}
-                                    className="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]"
+                                    className="link-hover-underline text-sm font-bold transition-all"
                                 >
                                     Log in
                                 </Link>
                                 {canRegister && (
                                     <Link
                                         href={register()}
-                                        className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
+                                        className="glow-primary btn-hover-scale rounded-full bg-primary px-6 py-2 text-sm font-black text-primary-foreground shadow-lg transition-all active:scale-95"
                                     >
-                                        Register
+                                        Get Started Free
                                     </Link>
                                 )}
                             </>
                         )}
                     </nav>
                 </header>
-                <div className="flex w-full items-center justify-center opacity-100 transition-opacity duration-750 lg:grow starting:opacity-0">
-                    <main className="flex w-full max-w-[335px] flex-col-reverse lg:max-w-4xl lg:flex-row">
-                        <div className="flex-1 rounded-br-lg rounded-bl-lg bg-white p-6 pb-12 text-[13px] leading-[20px] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] lg:rounded-tl-lg lg:rounded-br-none lg:p-20 dark:bg-[#161615] dark:text-[#EDEDEC] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]">
-                            <h1 className="mb-1 font-medium">
-                                Let's get started
+                <div className="animate-scale-in flex w-full items-center justify-center lg:grow">
+                    <main className="glass flex w-full max-w-[335px] flex-col-reverse overflow-hidden rounded-[2rem] shadow-elevated-lg lg:max-w-5xl lg:flex-row">
+                        <div className="flex-1 p-8 pb-12 lg:p-20">
+                            <h1 className="font-display mb-4 text-4xl font-black leading-tight tracking-tight lg:text-6xl">
+                                FinFlow <span className="text-primary italic">.</span>
                             </h1>
-                            <p className="mb-2 text-[#706f6c] dark:text-[#A1A09A]">
-                                Laravel has an incredibly rich ecosystem.
-                                <br />
-                                We suggest starting with the following.
+                            <p className="mb-8 text-lg font-medium text-muted-foreground lg:text-xl">
+                                Quietly managing your wealth with elegance and precision.
                             </p>
                             <ul className="mb-4 flex flex-col lg:mb-6">
                                 <li className="relative flex items-center gap-4 py-2 before:absolute before:top-1/2 before:bottom-0 before:left-[0.4rem] before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A]">

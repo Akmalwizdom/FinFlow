@@ -1,18 +1,20 @@
-/* Import Manrope font from Google Fonts - must be first */
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+/* Import Manrope (body) + Outfit (display) fonts from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap');
 
 @import 'tailwindcss';
 
 @import 'tw-animate-css';
 
+@import './animation.css';
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-    /* Typography - Manrope for FinFlow design */
+    /* Typography - Dual font system */
     --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-display: 'Outfit', 'Manrope', ui-sans-serif, system-ui, sans-serif;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -74,42 +76,42 @@
     --card-foreground: #101818;
     --popover: #ffffff;
     --popover-foreground: #101818;
-    
+
     /* Primary - Teal */
     --primary: #007180;
     --primary-foreground: #ffffff;
-    
+
     /* Secondary */
     --secondary: #f0f4f5;
     --secondary-foreground: #101818;
-    
+
     /* Muted */
     --muted: #f0f4f5;
     --muted-foreground: #5e878d;
-    
+
     /* Accent */
     --accent: #f0f4f5;
     --accent-foreground: #101818;
-    
+
     /* Destructive - Red/Expense */
     --destructive: #e73108;
     --destructive-foreground: #ffffff;
-    
+
     /* Border & Input */
     --border: #dae5e7;
     --input: #dae5e7;
     --ring: #007180;
-    
+
     /* Chart Colors */
     --chart-1: #007180;
     --chart-2: #4db6ac;
     --chart-3: #80cbc4;
     --chart-4: #b2dfdb;
     --chart-5: #e0f2f1;
-    
+
     /* Radius */
     --radius: 0.625rem;
-    
+
     /* Sidebar */
     --sidebar: #ffffff;
     --sidebar-foreground: #101818;
@@ -119,7 +121,7 @@
     --sidebar-accent-foreground: #007180;
     --sidebar-border: #dae5e7;
     --sidebar-ring: #007180;
-    
+
     /* FinFlow Semantic Colors */
     --income: #078834;
     --expense: #e73108;
@@ -133,39 +135,39 @@
     --card-foreground: #f0f4f5;
     --popover: #27272a;
     --popover-foreground: #f0f4f5;
-    
+
     /* Primary - Teal */
     --primary: #4db6ac;
     --primary-foreground: #101818;
-    
+
     /* Secondary */
     --secondary: #27272a;
     --secondary-foreground: #f0f4f5;
-    
+
     /* Muted */
     --muted: #27272a;
     --muted-foreground: #a1a1aa;
-    
+
     /* Accent */
     --accent: #27272a;
     --accent-foreground: #f0f4f5;
-    
+
     /* Destructive */
     --destructive: #ef5350;
     --destructive-foreground: #ffffff;
-    
+
     /* Border & Input */
     --border: #3f3f46;
     --input: #3f3f46;
     --ring: #4db6ac;
-    
+
     /* Chart Colors - Dark mode */
     --chart-1: #4db6ac;
     --chart-2: #80cbc4;
     --chart-3: #b2dfdb;
     --chart-4: #e0f2f1;
     --chart-5: #007180;
-    
+
     /* Sidebar - Dark */
     --sidebar: #27272a;
     --sidebar-foreground: #f0f4f5;
@@ -175,7 +177,7 @@
     --sidebar-accent-foreground: #4db6ac;
     --sidebar-border: #3f3f46;
     --sidebar-ring: #4db6ac;
-    
+
     /* FinFlow Semantic Colors - Dark */
     --income: #4caf50;
     --expense: #ef5350;
@@ -203,4 +205,93 @@
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
     background: #3f3f46;
+}
+
+/* FinFlow Visual Effects - Phase 2 */
+
+/* Glassmorphism effect */
+.glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass {
+    background: rgba(39, 39, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced shadow system */
+.shadow-elevated {
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -2px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(0, 0, 0, 0.02);
+}
+
+.shadow-elevated-lg {
+    box-shadow:
+        0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 8px 10px -6px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(0, 0, 0, 0.02);
+}
+
+.dark .shadow-elevated,
+.dark .shadow-elevated-lg {
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.3),
+        0 2px 4px -2px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* Glow effect for primary elements */
+.glow-primary {
+    box-shadow: 0 0 20px rgba(0, 113, 128, 0.3);
+}
+
+.dark .glow-primary {
+    box-shadow: 0 0 20px rgba(77, 182, 172, 0.3);
+}
+
+/* Noise texture overlay */
+.noise-overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.03;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* Subtle gradient backgrounds */
+.gradient-mesh {
+    background:
+        radial-gradient(at 40% 20%, rgba(0, 113, 128, 0.1) 0px, transparent 50%),
+        radial-gradient(at 80% 0%, rgba(7, 136, 52, 0.08) 0px, transparent 50%),
+        radial-gradient(at 0% 50%, rgba(0, 113, 128, 0.05) 0px, transparent 50%);
+}
+
+.dark .gradient-mesh {
+    background:
+        radial-gradient(at 40% 20%, rgba(77, 182, 172, 0.15) 0px, transparent 50%),
+        radial-gradient(at 80% 0%, rgba(76, 175, 80, 0.1) 0px, transparent 50%),
+        radial-gradient(at 0% 50%, rgba(77, 182, 172, 0.08) 0px, transparent 50%);
+}
+
+/* Card with subtle border glow on hover */
+.card-glow {
+    transition: box-shadow 0.3s ease;
+}
+
+.card-glow:hover {
+    box-shadow:
+        0 0 0 1px rgba(0, 113, 128, 0.2),
+        0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dark .card-glow:hover {
+    box-shadow:
+        0 0 0 1px rgba(77, 182, 172, 0.3),
+        0 4px 12px rgba(0, 0, 0, 0.3);
 }

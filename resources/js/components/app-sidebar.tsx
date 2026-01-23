@@ -131,11 +131,11 @@ export function AppSidebar() {
 
     return (
         <>
-        <Sidebar collapsible="icon" variant="inset">
+        <Sidebar collapsible="icon" variant="inset" className="glass border-r-0">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
+                        <SidebarMenuButton size="lg" asChild className="hover:bg-transparent">
                             <Link href={dashboard()} prefetch>
                                 <AppLogo />
                             </Link>
@@ -155,10 +155,11 @@ export function AppSidebar() {
                                     asChild
                                     isActive={url === item.href}
                                     tooltip={{ children: item.title }}
+                                    className="rounded-xl transition-all hover:bg-primary/5"
                                 >
                                     <Link href={item.href} prefetch>
-                                        {item.icon && <item.icon />}
-                                        <span>{item.title}</span>
+                                        {item.icon && <item.icon className={url === item.href ? "text-primary transition-colors" : ""} />}
+                                        <span className={url === item.href ? "font-bold text-primary transition-colors" : ""}>{item.title}</span>
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
@@ -175,9 +176,10 @@ export function AppSidebar() {
                                     <SidebarMenuButton
                                         tooltip="Settings"
                                         isActive={isSettingsActive}
+                                        className="rounded-xl transition-all"
                                     >
-                                        <Settings />
-                                        <span>Settings</span>
+                                        <Settings className={isSettingsActive ? "text-primary transition-colors" : ""} />
+                                        <span className={isSettingsActive ? "font-bold text-primary transition-colors" : ""}>Settings</span>
                                         <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                                     </SidebarMenuButton>
                                 </CollapsibleTrigger>
@@ -188,10 +190,11 @@ export function AppSidebar() {
                                                 <SidebarMenuSubButton
                                                     asChild
                                                     isActive={url === item.href}
+                                                    className="rounded-lg"
                                                 >
                                                     <Link href={item.href}>
-                                                        <item.icon className="size-4" />
-                                                        <span>{item.title}</span>
+                                                        <item.icon className={url === item.href ? "size-4 text-primary" : "size-4"} />
+                                                        <span className={url === item.href ? "font-bold text-primary" : ""}>{item.title}</span>
                                                     </Link>
                                                 </SidebarMenuSubButton>
                                             </SidebarMenuSubItem>
@@ -207,7 +210,7 @@ export function AppSidebar() {
             <SidebarFooter className="gap-3">
                 <NavUser />
                 <Button 
-                    className="w-full gap-2 rounded-xl font-bold"
+                    className="glow-primary btn-hover-scale w-full gap-2 rounded-xl font-black shadow-lg"
                     onClick={() => setIsModalOpen(true)}
                 >
                     <Plus className="size-4" />

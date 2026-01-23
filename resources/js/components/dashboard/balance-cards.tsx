@@ -1,4 +1,5 @@
 import { TrendingUp } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
 interface BalanceCardsProps {
     balance: number;
@@ -17,6 +18,40 @@ function formatCurrency(amount: number): string {
     }).format(amount);
 }
 
+// Animated number component for counting effect
+function AnimatedNumber({ value, duration = 1000 }: { value: number; duration?: number }) {
+    const [displayValue, setDisplayValue] = useState(0);
+    const startTime = useRef<number | null>(null);
+    const animationFrame = useRef<number | null>(null);
+
+    useEffect(() => {
+        startTime.current = null;
+        
+        const animate = (timestamp: number) => {
+            if (!startTime.current) startTime.current = timestamp;
+            const progress = Math.min((timestamp - startTime.current) / duration, 1);
+            
+            // Easing function for smooth deceleration
+            const easeOut = 1 - Math.pow(1 - progress, 3);
+            setDisplayValue(value * easeOut);
+            
+            if (progress < 1) {
+                animationFrame.current = requestAnimationFrame(animate);
+            }
+        };
+        
+        animationFrame.current = requestAnimationFrame(animate);
+        
+        return () => {
+            if (animationFrame.current) {
+                cancelAnimationFrame(animationFrame.current);
+            }
+        };
+    }, [value, duration]);
+
+    return <>{formatCurrency(displayValue)}</>;
+}
+
 export function BalanceCards({
     balance,
     balanceChange,
@@ -28,7 +63,7 @@ export function BalanceCards({
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
             {/* Total Balance Card */}
-            <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-6 shadow-sm">
+            <div className="card-hover-lift animate-fade-in-up stagger-1 flex flex-col gap-2 rounded-2xl border border-border bg-card p-6 shadow-sm">
                 <div className="flex items-start justify-between">
                     <span className="text-sm font-semibold text-muted-foreground">
                         Total Balance
@@ -38,7 +73,7 @@ export function BalanceCards({
                     </span>
                 </div>
                 <p className="text-3xl font-bold tracking-tight text-foreground">
-                    {formatCurrency(balance)}
+                    <AnimatedNumber value={balance} duration={1200} />
                 </p>
                 <p className="text-xs text-muted-foreground">
                     Across 4 accounts
@@ -46,7 +81,7 @@ export function BalanceCards({
             </div>
 
             {/* Monthly Income Card */}
-            <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-6 shadow-sm">
+            <div className="card-hover-lift animate-fade-in-up stagger-2 flex flex-col gap-2 rounded-2xl border border-border bg-card p-6 shadow-sm">
                 <div className="flex items-start justify-between">
                     <span className="text-sm font-semibold text-muted-foreground">
                         Monthly Income
@@ -56,18 +91,18 @@ export function BalanceCards({
                     </span>
                 </div>
                 <p className="text-3xl font-bold tracking-tight text-foreground">
-                    {formatCurrency(income)}
+                    <AnimatedNumber value={income} duration={1200} />
                 </p>
                 <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-muted">
                     <div
-                        className="h-full rounded-full bg-primary transition-all"
+                        className="h-full rounded-full bg-primary transition-all duration-1000 ease-out"
                         style={{ width: `${incomeProgress}%` }}
                     />
                 </div>
             </div>
 
             {/* Monthly Expenses Card */}
-            <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-6 shadow-sm">
+            <div className="card-hover-lift animate-fade-in-up stagger-3 flex flex-col gap-2 rounded-2xl border border-border bg-card p-6 shadow-sm">
                 <div className="flex items-start justify-between">
                     <span className="text-sm font-semibold text-muted-foreground">
                         Monthly Expenses
@@ -77,7 +112,7 @@ export function BalanceCards({
                     </span>
                 </div>
                 <p className="text-3xl font-bold tracking-tight text-foreground">
-                    {formatCurrency(expenses)}
+                    <AnimatedNumber value={expenses} duration={1200} />
                 </p>
                 <p className="text-xs text-muted-foreground">
                     {formatCurrency(remainingBudget)} remaining budget

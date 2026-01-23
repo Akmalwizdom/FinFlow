@@ -114,19 +114,19 @@ export default function Dashboard() {
             <Head title="Dashboard" />
 
             {/* Main Dashboard Content */}
-            <div className="flex flex-1 flex-col gap-6 p-4 md:gap-8 md:p-8">
+            <div className="noise-overlay relative flex flex-1 flex-col gap-6 p-4 md:gap-8 md:p-8">
                 {/* Header Section */}
-                <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                <div className="animate-fade-in-up flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                     <div>
-                        <h1 className="text-2xl font-black tracking-tight text-foreground md:text-3xl">
+                        <h1 className="font-display text-3xl font-black tracking-tight text-foreground md:text-5xl">
                             Dashboard Overview
                         </h1>
-                        <p className="mt-1 text-muted-foreground">
+                        <p className="mt-2 text-lg text-muted-foreground">
                             Quietly managing your wealth since last session.
                         </p>
                     </div>
                     <div className="flex items-center gap-4">
-                        <button className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted">
+                        <button className="btn-hover-scale flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-bold text-foreground shadow-sm transition-all hover:bg-muted active:scale-95">
                             <EyeOff className="size-4" />
                             <span>Privacy Mode</span>
                         </button>
@@ -136,20 +136,25 @@ export default function Dashboard() {
                 {/* Balance Cards */}
                 <BalanceCards {...balanceData} />
 
-                {/* Charts Section */}
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
-                    <div className="lg:col-span-2">
+                {/* Charts Section - Asymmetric Layout */}
+                <div className="animate-fade-in-up stagger-4 grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8">
+                    <div className="lg:col-span-8">
                         <BalanceTrendChart data={trendData} />
                     </div>
-                    <CategoryDonut
-                        categories={categoryData}
-                        totalSpent={balanceData.expenses}
-                    />
+                    <div className="lg:col-span-4">
+                        <CategoryDonut
+                            categories={categoryData}
+                            totalSpent={balanceData.expenses}
+                        />
+                    </div>
                 </div>
 
-                {/* Budget Widget and Recent Transactions */}
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
-                    <div className="lg:col-span-2">
+                {/* Budget Widget and Recent Transactions - Asymmetric Layout */}
+                <div className="animate-fade-in-up stagger-5 grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8">
+                    <div className="lg:col-span-4">
+                        <BudgetWidget summary={budgetSummary} />
+                    </div>
+                    <div className="lg:col-span-8">
                         <RecentTransactions
                             transactions={dashboardTransactions}
                             onViewAll={() => {
@@ -157,7 +162,6 @@ export default function Dashboard() {
                             }}
                         />
                     </div>
-                    <BudgetWidget summary={budgetSummary} />
                 </div>
             </div>
         </AppLayout>
