@@ -193,11 +193,11 @@ export function AppSidebar() {
                                                 <SidebarMenuSubButton
                                                     asChild
                                                     isActive={url === item.href}
-                                                    className="h-9 px-3 rounded-lg transition-all hover:bg-primary/5"
+                                                    className="h-10 px-3 rounded-lg transition-all hover:bg-primary/5"
                                                 >
                                                     <Link href={item.href} className="flex items-center gap-3">
-                                                        <item.icon className={cn("size-4 transition-colors", url === item.href ? "text-primary" : "text-muted-foreground")} />
-                                                        <span className={cn("text-xs transition-colors", url === item.href ? "font-bold text-primary" : "font-medium text-foreground")}>{item.title}</span>
+                                                        <item.icon className={cn("size-5 transition-colors", url === item.href ? "text-primary" : "text-muted-foreground")} />
+                                                        <span className={cn("text-sm transition-colors", url === item.href ? "font-bold text-primary" : "font-medium text-foreground")}>{item.title}</span>
                                                     </Link>
                                                 </SidebarMenuSubButton>
                                             </SidebarMenuSubItem>
