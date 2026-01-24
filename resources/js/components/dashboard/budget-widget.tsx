@@ -52,7 +52,7 @@ export function BudgetWidget({ summary }: BudgetWidgetProps) {
     const progressColor = summary.overall_progress > 100
         ? 'bg-expense'
         : summary.overall_progress > 80
-            ? 'bg-amber-500'
+            ? 'bg-warning'
             : 'bg-income';
 
     return (
@@ -101,7 +101,7 @@ export function BudgetWidget({ summary }: BudgetWidgetProps) {
                         {summary.on_track_count} on track
                     </div>
                     {summary.near_limit_count > 0 && (
-                        <div className="flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-500">
+                        <div className="flex items-center gap-1.5 rounded-full bg-warning/10 px-2.5 py-1 text-xs font-medium text-warning">
                             <AlertTriangle className="size-3" />
                             {summary.near_limit_count} near limit
                         </div>

@@ -3,7 +3,7 @@ import { Wallet } from 'lucide-react';
 export default function AppLogo() {
     return (
         <>
-            <div className="flex aspect-square size-10 items-center justify-center rounded-xl bg-primary text-white">
+            <div className="flex aspect-square size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
                 <Wallet className="size-5" />
             </div>
             <div className="ml-2 grid flex-1 text-left group-data-[state=collapsed]:hidden">

@@ -61,7 +61,7 @@ export function TransactionRow({ transaction, onClick, onDelete }: TransactionRo
             className="group flex cursor-pointer items-center justify-between rounded-xl border border-transparent bg-card p-4 transition-all hover:border-border hover:shadow-md"
         >
             <div className="flex items-center gap-4">
-                <div className="flex size-11 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-colors group-hover:bg-primary group-hover:text-white">
+                <div className="flex size-11 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                     <Icon className="size-5" />
                 </div>
                 <div>

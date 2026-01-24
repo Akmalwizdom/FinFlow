@@ -27,7 +27,7 @@ export function MobileNav({ onAddTransaction }: MobileNavProps) {
             <div className="fixed bottom-24 right-4 z-30 md:hidden">
                 <button
                     onClick={onAddTransaction}
-                    className="flex size-14 items-center justify-center rounded-full bg-primary text-white shadow-lg transition-transform active:scale-90"
+                    className="flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform active:scale-90"
                 >
                     <Plus className="size-7" />
                 </button>
