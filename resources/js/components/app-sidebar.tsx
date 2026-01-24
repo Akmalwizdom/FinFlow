@@ -19,6 +19,7 @@ import { NavUser } from '@/components/nav-user';
 import { AddTransactionModal, type TransactionFormData } from '@/components/transactions/add-transaction-modal';
 import { Button } from '@/components/ui/button';
 import { categoriesApi, transactionsApi, type Category } from '@/lib/api';
+import { cn } from '@/lib/utils';
 import {
     Collapsible,
     CollapsibleContent,
@@ -155,11 +156,11 @@ export function AppSidebar() {
                                     asChild
                                     isActive={url === item.href}
                                     tooltip={{ children: item.title }}
-                                    className="rounded-xl transition-all hover:bg-primary/5"
+                                    className="h-11 px-4 rounded-xl transition-all hover:bg-primary/5"
                                 >
-                                    <Link href={item.href} prefetch>
-                                        {item.icon && <item.icon className={url === item.href ? "text-primary transition-colors" : ""} />}
-                                        <span className={url === item.href ? "font-bold text-primary transition-colors" : ""}>{item.title}</span>
+                                    <Link href={item.href} prefetch className="flex items-center gap-3">
+                                        {item.icon && <item.icon className={cn("size-5", url === item.href ? "text-primary transition-colors" : "text-muted-foreground")} />}
+                                        <span className={cn("text-sm transition-colors", url === item.href ? "font-bold text-primary" : "font-medium text-foreground")}>{item.title}</span>
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
@@ -176,11 +177,13 @@ export function AppSidebar() {
                                     <SidebarMenuButton
                                         tooltip="Settings"
                                         isActive={isSettingsActive}
-                                        className="rounded-xl transition-all"
+                                        className="h-11 px-4 rounded-xl transition-all hover:bg-primary/5"
                                     >
-                                        <Settings className={isSettingsActive ? "text-primary transition-colors" : ""} />
-                                        <span className={isSettingsActive ? "font-bold text-primary transition-colors" : ""}>Settings</span>
-                                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                        <div className="flex w-full items-center gap-3">
+                                            <Settings className={cn("size-5", isSettingsActive ? "text-primary transition-colors" : "text-muted-foreground")} />
+                                            <span className={cn("text-sm transition-colors", isSettingsActive ? "font-bold text-primary" : "font-medium text-foreground")}>Settings</span>
+                                            <ChevronRight className="ml-auto size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                        </div>
                                     </SidebarMenuButton>
                                 </CollapsibleTrigger>
                                 <CollapsibleContent>
@@ -190,11 +193,11 @@ export function AppSidebar() {
                                                 <SidebarMenuSubButton
                                                     asChild
                                                     isActive={url === item.href}
-                                                    className="rounded-lg"
+                                                    className="h-9 px-3 rounded-lg transition-all hover:bg-primary/5"
                                                 >
-                                                    <Link href={item.href}>
-                                                        <item.icon className={url === item.href ? "size-4 text-primary" : "size-4"} />
-                                                        <span className={url === item.href ? "font-bold text-primary" : ""}>{item.title}</span>
+                                                    <Link href={item.href} className="flex items-center gap-3">
+                                                        <item.icon className={cn("size-4 transition-colors", url === item.href ? "text-primary" : "text-muted-foreground")} />
+                                                        <span className={cn("text-xs transition-colors", url === item.href ? "font-bold text-primary" : "font-medium text-foreground")}>{item.title}</span>
                                                     </Link>
                                                 </SidebarMenuSubButton>
                                             </SidebarMenuSubItem>
