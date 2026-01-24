@@ -6,7 +6,7 @@ export default function AppLogo() {
             <div className="flex aspect-square size-10 items-center justify-center rounded-xl bg-primary text-white">
                 <Wallet className="size-5" />
             </div>
-            <div className="ml-2 grid flex-1 text-left">
+            <div className="ml-2 grid flex-1 text-left group-data-[state=collapsed]:hidden">
                 <span className="truncate leading-tight font-bold text-foreground">
                     FinFlow
                 </span>

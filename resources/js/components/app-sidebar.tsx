@@ -160,7 +160,7 @@ export function AppSidebar() {
                                 >
                                     <Link href={item.href} prefetch className="flex items-center gap-3">
                                         {item.icon && <item.icon className={cn("size-5", url === item.href ? "text-primary transition-colors" : "text-muted-foreground")} />}
-                                        <span className={cn("text-sm transition-colors", url === item.href ? "font-bold text-primary" : "font-medium text-foreground")}>{item.title}</span>
+                                        <span className={cn("text-sm transition-colors group-data-[state=collapsed]:hidden", url === item.href ? "font-bold text-primary" : "font-medium text-foreground")}>{item.title}</span>
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
@@ -181,8 +181,8 @@ export function AppSidebar() {
                                     >
                                         <div className="flex w-full items-center gap-3">
                                             <Settings className={cn("size-5", isSettingsActive ? "text-primary transition-colors" : "text-muted-foreground")} />
-                                            <span className={cn("text-sm transition-colors", isSettingsActive ? "font-bold text-primary" : "font-medium text-foreground")}>Settings</span>
-                                            <ChevronRight className="ml-auto size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                            <span className={cn("text-sm transition-colors group-data-[state=collapsed]:hidden", isSettingsActive ? "font-bold text-primary" : "font-medium text-foreground")}>Settings</span>
+                                            <ChevronRight className="ml-auto size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 group-data-[state=collapsed]:hidden" />
                                         </div>
                                     </SidebarMenuButton>
                                 </CollapsibleTrigger>
@@ -217,7 +217,7 @@ export function AppSidebar() {
                     onClick={() => setIsModalOpen(true)}
                 >
                     <Plus className="size-4" />
-                    <span>Add Transaction</span>
+                    <span className="group-data-[state=collapsed]:hidden">Add Transaction</span>
                 </Button>
             </SidebarFooter>
         </Sidebar>
