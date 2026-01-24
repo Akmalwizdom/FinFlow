@@ -13,7 +13,7 @@ export function UserInfo({
 
     return (
         <>
-            <Avatar className="h-8 w-8 overflow-hidden rounded-full">
+            <Avatar className="h-8 w-8 overflow-hidden rounded-full group-data-[state=expanded]:hidden">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-lg bg-muted text-foreground">
                     {getInitials(user.name)}
