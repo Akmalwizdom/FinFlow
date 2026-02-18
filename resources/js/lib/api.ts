@@ -361,5 +361,53 @@ export const settingsApi = {
         api.delete<ApiResponse<null>>('/settings/account', { data }),
 };
 
+export interface Receipt {
+    id: number;
+    image_url: string | null;
+    status: 'pending' | 'processing' | 'completed' | 'failed';
+    raw_text: string | null;
+    parsed_data: {
+        merchant: string | null;
+        total: number;
+        date: string | null;
+        items: Array<{ name: string; price: number }>;
+        confidence: number;
+    } | null;
+    error_message: string | null;
+    transaction_id: number | null;
+    created_at: string;
+    updated_at: string;
+}
+
+// Receipt API
+export const receiptsApi = {
+    list: (params?: { page?: number; per_page?: number }) =>
+        api.get<ApiResponse<PaginatedResponse<Receipt>>>('/receipts', { params }),
+
+    get: (id: number) => api.get<ApiResponse<Receipt>>(`/receipts/${id}`),
+
+    scan: (file: File) => {
+        const formData = new FormData();
+        formData.append('image', file);
+        return api.post<ApiResponse<Receipt>>('/receipts/scan', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+    },
+
+    createTransaction: (receiptId: number, data: {
+        category_id: number;
+        account_id: number;
+        type: 'income' | 'expense';
+        amount: number;
+        note?: string;
+        transaction_date: string;
+        spending_type?: 'need' | 'want';
+    }) => api.post<ApiResponse<Transaction>>(`/receipts/${receiptId}/transaction`, data),
+
+    delete: (id: number) => api.delete<ApiResponse<null>>(`/receipts/${id}`),
+};
+
 export default api;
 
