@@ -8,6 +8,7 @@ use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ForecastController;
 use App\Http\Controllers\InsightController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ReceiptScanController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
