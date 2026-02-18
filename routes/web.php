@@ -27,6 +27,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('reports', function () {
         return Inertia::render('reports/index');
     })->name('reports');
+
+    Route::get('receipts/scanner', function () {
+        return Inertia::render('receipts/scanner');
+    })->name('receipts.scanner');
 });
 
 require __DIR__.'/settings.php';
