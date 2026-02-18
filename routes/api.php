@@ -56,6 +56,13 @@ Route::middleware(['auth:web'])->prefix('v1')->group(function () {
     Route::put('settings', [SettingsController::class, 'update']);
     Route::put('settings/password', [SettingsController::class, 'changePassword']);
     Route::delete('settings/account', [SettingsController::class, 'destroy']);
+
+    // Receipt Scanner
+    Route::post('receipts/scan', [ReceiptScanController::class, 'scan']);
+    Route::get('receipts', [ReceiptScanController::class, 'index']);
+    Route::get('receipts/{receipt}', [ReceiptScanController::class, 'show']);
+    Route::post('receipts/{receipt}/transaction', [ReceiptScanController::class, 'createTransaction']);
+    Route::delete('receipts/{receipt}', [ReceiptScanController::class, 'destroy']);
 });
 
 

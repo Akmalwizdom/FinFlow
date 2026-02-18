@@ -93,6 +93,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the receipts for the user.
+     */
+    public function receipts(): HasMany
+    {
+        return $this->hasMany(Receipt::class);
+    }
+
+    /**
      * Boot the model.
      */
     protected static function booted(): void
