@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ReceiptScanRequest;
 use App\Http\Resources\ReceiptResource;
 use App\Http\Resources\TransactionResource;
+use App\Jobs\ProcessReceiptOcr;
 use App\Models\Receipt;
 use App\Models\Transaction;
 use App\Services\ReceiptParserService;
@@ -59,13 +60,13 @@ class ReceiptScanController extends Controller
             'status' => 'pending',
         ]);
 
-        // Process synchronously as per user preference
-        $receipt = $this->parserService->processReceipt($receipt);
+        // Dispatch background job for OCR processing
+        ProcessReceiptOcr::dispatch($receipt);
 
         return response()->json([
             'success' => true,
             'data' => new ReceiptResource($receipt),
-            'message' => 'Receipt scanned successfully',
+            'message' => 'Receipt upload successful, processing has started in the background',
         ]);
     }
 
