@@ -24,10 +24,11 @@ export function MobileNav({ onAddTransaction }: MobileNavProps) {
     return (
         <>
             {/* Floating Action Button */}
-            <div className="fixed bottom-24 right-4 z-30 md:hidden">
+            <div className="fixed bottom-24 right-4 z-50 md:hidden">
                 <button
                     onClick={onAddTransaction}
-                    className="flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform active:scale-90"
+                    className="flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform active:scale-90 pointer-events-auto touch-manipulation"
+                    style={{ touchAction: 'manipulation' }}
                 >
                     <Plus className="size-7" />
                 </button>
