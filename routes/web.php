@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\BudgetController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -27,6 +28,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('reports', function () {
         return Inertia::render('reports/index');
     })->name('reports');
+
+    // Report exports
+    Route::get('reports/export/pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf');
+    Route::get('reports/export/excel', [ReportController::class, 'exportExcel'])->name('reports.export.excel');
 
     Route::get('receipts/scanner', function () {
         return Inertia::render('receipts/scanner');

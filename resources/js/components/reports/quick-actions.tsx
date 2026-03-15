@@ -1,4 +1,6 @@
-import { ChevronRight, Download, FileText, PlusCircle, Share2 } from 'lucide-react';
+import { ChevronRight, Download, FileSpreadsheet, FileText } from 'lucide-react';
+import { router } from '@inertiajs/react';
+import { toast } from 'sonner';
 
 interface QuickAction {
     icon: React.ReactNode;
@@ -7,21 +9,42 @@ interface QuickAction {
 }
 
 export function QuickActions() {
+    const handleExportPDF = () => {
+        toast.info('Generating PDF report...');
+        router.get('/reports/export/pdf', undefined, {
+            preserveState: true,
+            onSuccess: () => {
+                toast.success('PDF report downloaded!');
+            },
+            onError: () => {
+                toast.error('Failed to generate PDF report.');
+            },
+        });
+    };
+
+    const handleExportExcel = () => {
+        toast.info('Generating Excel report...');
+        router.get('/reports/export/excel', undefined, {
+            preserveState: true,
+            onSuccess: () => {
+                toast.success('Excel report downloaded!');
+            },
+            onError: () => {
+                toast.error('Failed to generate Excel report.');
+            },
+        });
+    };
+
     const actions: QuickAction[] = [
         {
             icon: <FileText className="size-5 text-muted-foreground" />,
-            label: 'Download PDF Report',
-            onClick: () => console.log('Download PDF'),
+            label: 'Export PDF',
+            onClick: handleExportPDF,
         },
         {
-            icon: <Share2 className="size-5 text-muted-foreground" />,
-            label: 'Share with Accountant',
-            onClick: () => console.log('Share'),
-        },
-        {
-            icon: <PlusCircle className="size-5 text-muted-foreground" />,
-            label: 'Add Missing Entry',
-            onClick: () => console.log('Add entry'),
+            icon: <FileSpreadsheet className="size-5 text-muted-foreground" />,
+            label: 'Export Excel',
+            onClick: handleExportExcel,
         },
     ];
 
