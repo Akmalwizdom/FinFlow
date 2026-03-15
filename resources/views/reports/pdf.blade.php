@@ -107,7 +107,7 @@
 <body>
     <div class="header">
         <h1>Financial Report</h1>
-        <p><strong>{{ user->name }}</strong></p>
+        <p><strong>{{ $user->name }}</strong></p>
         <p>Period: {{ now()->parse($currentMonth)->format('F Y') }}</p>
         <p>Generated: {{ now()->format('d M Y, H:i') }}</p>
     </div>
