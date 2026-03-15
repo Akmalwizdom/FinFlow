@@ -76,26 +76,21 @@ class ReportController extends Controller
     public function exportExcel(Request $request)
     {
         $user = $request->user();
-        
+
         // Get report data
         $currentMonth = now()->format('Y-m');
         $report = $this->reportService->getMonthlyReport($user->id, $currentMonth);
-        
+
         // Generate CSV content
         $csv = "Financial Report - " . now()->format('F Y') . "\n";
         $csv .= "Generated: " . now()->format('Y-m-d H:i:s') . "\n\n";
-        
+
         $csv .= "Summary\n";
         $csv .= "Metric,Amount\n";
         $csv .= sprintf("Total Income,%.2f\n", $report['total_income']);
         $csv .= sprintf("Total Expense,%.2f\n", $report['total_expense']);
         $csv .= sprintf("Remaining Balance,%.2f\n\n", $report['remaining_balance']);
-        
-        $csv .= "Need vs Want Ratio\n";
-        $csv .= "Type,Percentage\n";
-        $csv .= sprintf("Need,%.1f%%\n", $report['need_want_ratio']['need_percentage']);
-        $csv .= sprintf("Want,%.1f%%\n\n", $report['need_want_ratio']['want_percentage']);
-        
+
         $csv .= "Top Expense Categories\n";
         $csv .= "Category,Amount,Percentage\n";
         foreach ($report['top_categories'] ?? [] as $category) {
@@ -106,7 +101,7 @@ class ReportController extends Controller
                 $category['percentage']
             );
         }
-        
+
         return Response::make($csv, 200, [
             'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="financial_report_' . now()->format('Y-m-d') . '.csv"',

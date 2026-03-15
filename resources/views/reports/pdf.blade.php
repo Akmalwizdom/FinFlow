@@ -157,23 +157,15 @@
     @endif
 
     <div class="section">
-        <div class="section-title">Spending Analysis</div>
+        <div class="section-title">Monthly Comparison</div>
         <table>
             <thead>
                 <tr>
                     <th>Metric</th>
-                    <th class="text-right">Value</th>
+                    <th class="text-right">Change vs Last Month</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Need Percentage</td>
-                    <td class="text-right">{{ number_format($report['need_want_ratio']['need_percentage'], 1) }}%</td>
-                </tr>
-                <tr>
-                    <td>Want Percentage</td>
-                    <td class="text-right">{{ number_format($report['need_want_ratio']['want_percentage'], 1) }}%</td>
-                </tr>
                 @if($report['comparison_with_previous']['income_change'] !== null)
                 <tr>
                     <td>Income vs Last Month</td>
