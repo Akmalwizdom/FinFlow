@@ -9,14 +9,12 @@ interface QuickAction {
 
 export function QuickActions() {
     const handleExportPDF = () => {
-        toast.info('Generating PDF report...');
         // Use window.location for file download (Inertia doesn't handle file downloads)
         window.location.href = '/reports/export/pdf';
         toast.success('PDF report is downloading!');
     };
 
     const handleExportExcel = () => {
-        toast.info('Generating Excel report...');
         // Use window.location for file download (Inertia doesn't handle file downloads)
         window.location.href = '/reports/export/excel';
         toast.success('Excel report is downloading!');
