@@ -95,13 +95,13 @@ class ReceiptScanController extends Controller
             'type' => 'required|in:income,expense',
             'amount' => 'required|numeric|min:0.01',
             'note' => 'nullable|string|max:255',
-            'transaction_date' => 'required|date|before_or_equal:today',
+            'transaction_date' => 'required|date',
             'spending_type' => 'nullable|in:need,want',
             'account_id' => 'required|exists:accounts,id',
         ]);
 
         $transaction = $request->user()->transactions()->create($validated);
-        
+
         $receipt->update([
             'transaction_id' => $transaction->id,
         ]);

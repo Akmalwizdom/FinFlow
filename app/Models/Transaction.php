@@ -19,6 +19,7 @@ class Transaction extends Model
         'amount',
         'note',
         'transaction_date',
+        'spending_type',
     ];
 
     protected $casts = [

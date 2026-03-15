@@ -2,7 +2,6 @@ import {
     Calendar,
     ChevronDown,
     ChevronUp,
-    DollarSign,
     Info,
     Store,
     Tag,
@@ -29,11 +28,15 @@ interface ParsedData {
 interface ReceiptParsedResultProps {
     data: ParsedData;
     rawText?: string | null;
+    hideItemsList?: boolean;
+    hideRawText?: boolean;
 }
 
 export function ReceiptParsedResult({
     data,
     rawText,
+    hideItemsList = false,
+    hideRawText = false,
 }: ReceiptParsedResultProps) {
     const [isRawOpen, setIsRawOpen] = useState(false);
 
@@ -51,9 +54,9 @@ export function ReceiptParsedResult({
               : 'text-red-500 bg-red-500/10';
 
     return (
-        <div className="animate-in space-y-6 duration-500 slide-in-from-bottom-4">
+        <div className="animate-in space-y-8 duration-500 slide-in-from-bottom-4">
             <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold">Extraction Result</h3>
+                <h3 className="text-2xl font-black tracking-tight">Gemini Analysis</h3>
                 <Badge
                     variant="outline"
                     className={cn(
@@ -65,52 +68,52 @@ export function ReceiptParsedResult({
                 </Badge>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                {/* Merchant */}
-                <Card className="overflow-hidden rounded-2xl border-0 bg-accent/30 shadow-sm">
+            <div className="flex flex-col gap-3">
+                {/* Merchant Strip */}
+                <Card className="overflow-hidden rounded-xl border border-border/50 bg-card shadow-sm transition-all duration-200 hover:shadow-md">
                     <CardContent className="flex items-center gap-4 p-4">
-                        <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                             <Store className="size-5" />
                         </div>
-                        <div className="min-w-0">
-                            <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
+                        <div className="min-w-0 flex-1">
+                            <p className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
                                 Merchant
                             </p>
-                            <p className="truncate font-bold">
+                            <p className="text-base font-bold text-foreground break-words">
                                 {data.merchant || 'Unknown'}
                             </p>
                         </div>
                     </CardContent>
                 </Card>
 
-                {/* Amount */}
-                <Card className="overflow-hidden rounded-2xl border-0 bg-accent/30 shadow-sm">
+                {/* Total Amount Strip */}
+                <Card className="overflow-hidden rounded-xl border border-border/50 bg-card shadow-sm transition-all duration-200 hover:shadow-md">
                     <CardContent className="flex items-center gap-4 p-4">
-                        <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                            <DollarSign className="size-5" />
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                            <Tag className="size-5" />
                         </div>
-                        <div className="min-w-0">
-                            <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
+                        <div className="min-w-0 flex-1">
+                            <p className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
                                 Total Amount
                             </p>
-                            <p className="text-lg font-bold">
-                                ${data.total.toFixed(2)}
+                            <p className="text-lg font-bold text-foreground">
+                                Rp {data.total.toLocaleString('id-ID')}
                             </p>
                         </div>
                     </CardContent>
                 </Card>
 
-                {/* Date */}
-                <Card className="overflow-hidden rounded-2xl border-0 bg-accent/30 shadow-sm">
+                {/* Date Strip */}
+                <Card className="overflow-hidden rounded-xl border border-border/50 bg-card shadow-sm transition-all duration-200 hover:shadow-md">
                     <CardContent className="flex items-center gap-4 p-4">
-                        <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                             <Calendar className="size-5" />
                         </div>
-                        <div className="min-w-0">
-                            <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
-                                Date
+                        <div className="min-w-0 flex-1">
+                            <p className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+                                Transaction Date
                             </p>
-                            <p className="font-bold">
+                            <p className="text-base font-bold text-foreground">
                                 {data.date || 'Not found'}
                             </p>
                         </div>
@@ -119,37 +122,41 @@ export function ReceiptParsedResult({
             </div>
 
             {/* Items List (Simplified) */}
-            {data.items.length > 0 && (
-                <div className="space-y-3">
-                    <div className="flex items-center gap-2 text-sm font-bold text-muted-foreground">
+            {data.items.length > 0 && !hideItemsList && (
+                <div className="space-y-4">
+                    <div className="flex items-center gap-2 text-sm font-bold tracking-tight text-muted-foreground">
                         <Tag className="size-4" />
-                        <span>Detected Items</span>
+                        <span className="uppercase tracking-widest text-xs">Detected Items</span>
                     </div>
-                    <div className="grid grid-cols-1 gap-2">
+                    <div className="grid grid-cols-1 gap-3">
                         {data.items.slice(0, 5).map((item, i) => (
                             <div
                                 key={i}
-                                className="flex items-center justify-between rounded-xl border border-border/50 bg-accent/10 p-3"
+                                className="flex items-center justify-between rounded-2xl border border-white/20 bg-white/40 p-4 shadow-xs backdrop-blur-xl transition-colors hover:bg-white/50 dark:border-white/10 dark:bg-slate-900/40 dark:hover:bg-slate-900/50"
                             >
-                                <span className="text-sm font-medium">
+                                <span className="text-sm font-semibold text-foreground">
                                     {item.name}
                                 </span>
-                                <span className="text-sm font-bold">
-                                    ${item.price.toFixed(2)}
+                                <span className="text-sm font-black text-foreground">
+                                    Rp {item.price.toLocaleString('id-ID')}
                                 </span>
                             </div>
                         ))}
                         {data.items.length > 5 && (
-                            <p className="py-1 text-center text-xs text-muted-foreground">
-                                + {data.items.length - 5} more items
-                            </p>
+                            <div className="flex items-center justify-center gap-2 py-2">
+                                <div className="h-px flex-1 bg-border/50" />
+                                <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                                    + {data.items.length - 5} more items
+                                </span>
+                                <div className="h-px flex-1 bg-border/50" />
+                            </div>
                         )}
                     </div>
                 </div>
             )}
 
             {/* Raw Text Collapsible */}
-            {rawText && (
+            {rawText && !hideRawText && (
                 <Collapsible
                     open={isRawOpen}
                     onOpenChange={setIsRawOpen}

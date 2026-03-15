@@ -20,13 +20,23 @@ import {
 } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
+interface SaveTransactionData {
+    amount: number;
+    note: string;
+    transaction_date: string;
+    category_id: string;
+    account_id: string;
+    type: 'income' | 'expense';
+    spending_type?: 'need' | 'want';
+}
+
 interface ReceiptToTransactionFormProps {
     data: {
         merchant: string | null;
         total: number;
         date: string | null;
     };
-    onSave: (formData: any) => Promise<void>;
+    onSave: (formData: SaveTransactionData) => Promise<void>;
     isSaving: boolean;
 }
 
@@ -74,6 +84,10 @@ export function ReceiptToTransactionForm({
             toast.error('Please select both category and account.');
             return;
         }
+        
+        // Log form data for debugging
+        console.log('Form submitted with data:', formData);
+        
         onSave(formData);
     };
 
@@ -98,14 +112,14 @@ export function ReceiptToTransactionForm({
                     <div className="space-y-2">
                         <Label htmlFor="amount">Amount</Label>
                         <div className="relative">
-                            <span className="absolute top-1/2 left-3 -translate-y-1/2 font-bold text-muted-foreground">
-                                $
+                            <span className="absolute top-1/2 left-4 -translate-y-1/2 font-bold text-muted-foreground">
+                                Rp
                             </span>
                             <Input
                                 id="amount"
                                 type="number"
                                 step="0.01"
-                                className="rounded-xl pl-7"
+                                className="rounded-xl pl-12 transition-all focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2"
                                 value={formData.amount}
                                 onChange={(e) =>
                                     setFormData({
@@ -124,7 +138,7 @@ export function ReceiptToTransactionForm({
                         <Input
                             id="date"
                             type="date"
-                            className="rounded-xl"
+                            className="rounded-xl transition-all focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2"
                             value={formData.transaction_date}
                             onChange={(e) =>
                                 setFormData({
@@ -145,7 +159,7 @@ export function ReceiptToTransactionForm({
                                 setFormData({ ...formData, category_id: val })
                             }
                         >
-                            <SelectTrigger className="rounded-xl">
+                            <SelectTrigger className="rounded-xl transition-all focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2">
                                 <SelectValue placeholder="Select Category" />
                             </SelectTrigger>
                             <SelectContent className="rounded-xl">
@@ -181,7 +195,7 @@ export function ReceiptToTransactionForm({
                                 setFormData({ ...formData, account_id: val })
                             }
                         >
-                            <SelectTrigger className="rounded-xl">
+                            <SelectTrigger className="rounded-xl transition-all focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2">
                                 <SelectValue placeholder="Select Account" />
                             </SelectTrigger>
                             <SelectContent className="rounded-xl">
@@ -203,63 +217,35 @@ export function ReceiptToTransactionForm({
                     <Label htmlFor="note">Note (Merchant)</Label>
                     <Input
                         id="note"
-                        className="rounded-xl"
+                        placeholder="Enter merchant or notes..."
+                        className="rounded-xl transition-all focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2"
                         value={formData.note}
                         onChange={(e) =>
                             setFormData({ ...formData, note: e.target.value })
                         }
                     />
                 </div>
-
-                {/* Spending Type (Need/Want) */}
-                <div className="inline-flex rounded-xl border bg-accent/20 p-1">
-                    <button
-                        type="button"
-                        onClick={() =>
-                            setFormData({ ...formData, spending_type: 'need' })
-                        }
-                        className={cn(
-                            'rounded-lg px-4 py-2 text-sm font-bold transition-all',
-                            formData.spending_type === 'need'
-                                ? 'bg-background text-foreground shadow-sm'
-                                : 'text-muted-foreground hover:bg-background/50',
-                        )}
-                    >
-                        Need
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() =>
-                            setFormData({ ...formData, spending_type: 'want' })
-                        }
-                        className={cn(
-                            'rounded-lg px-4 py-2 text-sm font-bold transition-all',
-                            formData.spending_type === 'want'
-                                ? 'bg-background text-foreground shadow-sm'
-                                : 'text-muted-foreground hover:bg-background/50',
-                        )}
-                    >
-                        Want
-                    </button>
-                </div>
             </div>
 
             <Button
                 type="submit"
-                className="glow-primary btn-hover-scale mt-6 h-12 w-full rounded-2xl text-lg font-black"
+                className="group relative mt-8 h-14 w-full overflow-hidden rounded-2xl border-0 bg-primary px-8 text-lg font-black text-primary-foreground shadow-[0_0_40px_-10px_rgba(var(--primary),0.8)] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_60px_-15px_rgba(var(--primary),0.9)] active:scale-[0.98]"
                 disabled={isSaving}
             >
-                {isSaving ? (
-                    <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Saving Transaction...
-                    </>
-                ) : (
-                    <>
-                        <Check className="mr-2 h-5 w-5" />
-                        Confirm & Save Transaction
-                    </>
-                )}
+                <div className="absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
+                <span className="relative flex items-center justify-center">
+                    {isSaving ? (
+                        <>
+                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                            Saving Transaction...
+                        </>
+                    ) : (
+                        <>
+                            <Check className="mr-2 h-5 w-5" />
+                            Confirm & Save Transaction
+                        </>
+                    )}
+                </span>
             </Button>
         </form>
     );

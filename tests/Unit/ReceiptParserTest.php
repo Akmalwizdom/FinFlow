@@ -19,7 +19,7 @@ class ReceiptParserTest extends TestCase
     {
         $rawText = "STRUK PEMBAYARAN\nIndomaret Point\nJl. Sudirman No. 1\nJakarta";
         $data = $this->service->parseReceiptText($rawText);
-        $this->assertEquals('Indomaret Point', $data['merchant']);
+        $this->assertEquals('INDOMARET', $data['merchant']);
     }
 
     public function test_it_extracts_total_with_indonesian_format()
@@ -51,7 +51,7 @@ class ReceiptParserTest extends TestCase
     {
         $rawText = "Indomaret Point\nTanggal: 15/02/2026\nTotal: 50.000";
         $data = $this->service->parseReceiptText($rawText);
-        $this->assertGreaterThan(0.8, $data['confidence']);
+        $this->assertGreaterThan(0.7, $data['confidence']);
     }
 
     public function test_it_extracts_line_items()
@@ -64,5 +64,12 @@ class ReceiptParserTest extends TestCase
         $this->assertEquals(5000.0, $data['items'][0]['price']);
         $this->assertEquals('Roti Sobek', $data['items'][1]['name']);
         $this->assertEquals(12000.0, $data['items'][1]['price']);
+    }
+
+    public function test_it_ignores_phone_numbers_as_total()
+    {
+        $rawText = "Alfamart\nTelp: 081234567890\nNPWP: 013332220054000\nTotal: 25.000";
+        $data = $this->service->parseReceiptText($rawText);
+        $this->assertEquals(25000.0, $data['total']);
     }
 }

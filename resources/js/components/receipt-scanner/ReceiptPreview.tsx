@@ -8,6 +8,7 @@ interface ReceiptPreviewProps {
     imageUrl?: string | null;
     isProcessing: boolean;
     onRemove: () => void;
+    hideOverlay?: boolean;
 }
 
 export function ReceiptPreview({
@@ -15,6 +16,7 @@ export function ReceiptPreview({
     imageUrl,
     isProcessing,
     onRemove,
+    hideOverlay = false,
 }: ReceiptPreviewProps) {
     const previewUrl = file ? URL.createObjectURL(file) : imageUrl;
 
@@ -30,19 +32,23 @@ export function ReceiptPreview({
             />
 
             {/* Processing Overlay */}
-            {isProcessing && (
-                <div className="absolute inset-0 flex animate-in flex-col items-center justify-center gap-4 bg-background/60 backdrop-blur-sm duration-300 fade-in">
-                    <div className="relative">
-                        <div className="absolute -inset-4 animate-pulse rounded-full bg-primary/20 blur-xl" />
-                        <Loader2 className="size-10 animate-spin text-primary" />
-                    </div>
-                    <div className="space-y-1 text-center">
-                        <p className="animate-pulse text-lg font-bold">
-                            Scanning Receipt...
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                            Extracting details with OCR
-                        </p>
+            {isProcessing && !hideOverlay && (
+                <div className="absolute inset-0 overflow-hidden bg-background/70 backdrop-blur-md transition-all duration-500">
+                    <div className="absolute inset-0 flex animate-in flex-col items-center justify-center gap-6 duration-700 fade-in zoom-in-95">
+                        <div className="relative">
+                            <div className="absolute -inset-6 animate-pulse rounded-full bg-primary/20 blur-2xl" />
+                            <div className="relative flex size-16 items-center justify-center rounded-2xl border border-primary/20 bg-background/80 shadow-[0_0_20px_rgba(var(--primary),0.2)] backdrop-blur-xl">
+                                <Loader2 className="size-8 animate-spin text-primary" />
+                            </div>
+                        </div>
+                        <div className="space-y-2 text-center">
+                            <p className="text-xl font-bold tracking-tight text-foreground">
+                                AI Scanning...
+                            </p>
+                            <p className="mx-auto max-w-48 text-sm leading-relaxed text-muted-foreground">
+                                Analyzing receipt details with Gemini AI
+                            </p>
+                        </div>
                     </div>
                 </div>
             )}

@@ -69,10 +69,10 @@ export function ReceiptUploadZone({
     return (
         <div
             className={cn(
-                'group relative flex min-h-[300px] w-full flex-col items-center justify-center rounded-3xl border-2 border-dashed p-6 transition-all duration-300',
+                'group relative flex min-h-75 w-full flex-col items-center justify-center rounded-4xl border-2 border-dashed p-8 transition-all duration-300',
                 isDragging
-                    ? 'scale-[1.01] border-primary bg-primary/5'
-                    : 'border-muted-foreground/20 hover:border-primary/50 hover:bg-accent/50',
+                    ? 'scale-[1.02] border-primary bg-primary/5 shadow-xl shadow-primary/5'
+                    : 'border-muted-foreground/20 hover:border-primary/40 hover:bg-accent/30',
                 isUploading && 'pointer-events-none opacity-50',
             )}
             onDragOver={handleDragOver}
@@ -99,22 +99,23 @@ export function ReceiptUploadZone({
                     <h3 className="text-xl font-bold tracking-tight">
                         Upload Receipt
                     </h3>
-                    <p className="max-w-[240px] text-sm text-muted-foreground">
+                    <p className="max-w-64 text-sm text-muted-foreground leading-relaxed">
                         Drag and drop your receipt here, or click to browse
                         files
                     </p>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-center gap-3">
+                <div className="mt-2 flex flex-wrap items-center justify-center gap-4">
                     <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-10 gap-2 rounded-xl px-4"
+                        variant="secondary"
+                        className="h-11 min-w-11 gap-2 rounded-xl px-5 shadow-sm transition-all duration-200 hover:bg-secondary/80 focus:ring-2 focus:ring-primary/20 focus:ring-offset-2"
+                        type="button"
+                        onClick={() => document.getElementById('receipt-upload')?.click()}
                     >
                         <Camera className="size-4" />
-                        Take Photo
+                        <span className="font-semibold">Take Photo</span>
                     </Button>
-                    <span className="text-xs font-medium text-muted-foreground">
+                    <span className="text-xs font-medium text-muted-foreground px-2">
                         PNG, JPG, WEBP • Max 10MB
                     </span>
                 </div>
