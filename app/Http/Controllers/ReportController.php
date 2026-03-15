@@ -76,32 +76,106 @@ class ReportController extends Controller
     public function exportExcel(Request $request)
     {
         $user = $request->user();
-
+        
         // Get report data
         $currentMonth = now()->format('Y-m');
         $report = $this->reportService->getMonthlyReport($user->id, $currentMonth);
-
-        // Generate CSV content
-        $csv = "Financial Report - " . now()->format('F Y') . "\n";
-        $csv .= "Generated: " . now()->format('Y-m-d H:i:s') . "\n\n";
-
-        $csv .= "Summary\n";
-        $csv .= "Metric,Amount\n";
-        $csv .= sprintf("Total Income,%.2f\n", $report['total_income']);
-        $csv .= sprintf("Total Expense,%.2f\n", $report['total_expense']);
-        $csv .= sprintf("Remaining Balance,%.2f\n\n", $report['remaining_balance']);
-
-        $csv .= "Top Expense Categories\n";
-        $csv .= "Category,Amount,Percentage\n";
-        foreach ($report['top_categories'] ?? [] as $category) {
+        
+        // Generate CSV content with professional formatting
+        $csv = "FINFLOW - PERSONAL FINANCE MANAGEMENT SYSTEM\r\n";
+        $csv .= "Financial Report - " . now()->parse($currentMonth)->format('F Y') . "\r\n";
+        $csv .= "Generated: " . now()->format('d F Y, H:i') . " WIB\r\n";
+        $csv .= "User: " . $user->name . " (" . $user->email . ")\r\n";
+        $csv .= str_repeat('=', 80) . "\r\n\r\n";
+        
+        // Section 1: Financial Summary
+        $csv .= "SECTION 1: FINANCIAL SUMMARY\r\n";
+        $csv .= str_repeat('-', 50) . "\r\n";
+        $csv .= "Description,Amount (IDR)\r\n";
+        $csv .= sprintf("Total Income,\"Rp %s\"\r\n", number_format($report['total_income'], 0, ',', '.'));
+        $csv .= sprintf("Total Expenses,\"Rp %s\"\r\n", number_format($report['total_expense'], 0, ',', '.'));
+        $csv .= sprintf("Net Balance,\"Rp %s\"\r\n", number_format($report['remaining_balance'], 0, ',', '.'));
+        $csv .= "\r\n";
+        
+        // Section 2: Expense Breakdown
+        $csv .= "SECTION 2: EXPENSE BREAKDOWN BY CATEGORY\r\n";
+        $csv .= str_repeat('-', 50) . "\r\n";
+        $csv .= "No.,Category,Amount (IDR),Percentage\r\n";
+        $totalExpenses = 0;
+        foreach ($report['top_categories'] ?? [] as $index => $category) {
             $csv .= sprintf(
-                "%s,%.2f,%.1f%%\n",
+                "%d,%s,\"Rp %s\",%.1f%%\r\n",
+                $index + 1,
                 $category['category'],
-                $category['amount'],
+                number_format($category['amount'], 0, ',', '.'),
                 $category['percentage']
             );
+            $totalExpenses += $category['amount'];
         }
-
+        $csv .= str_repeat('-', 50) . "\r\n";
+        $csv .= sprintf(
+            "Total,\"Rp %s\",%.1f%%\r\n",
+            number_format($totalExpenses, 0, ',', '.'),
+            collect($report['top_categories'] ?? [])->sum('percentage')
+        );
+        $csv .= "\r\n";
+        
+        // Section 3: Monthly Performance Comparison
+        $csv .= "SECTION 3: MONTHLY PERFORMANCE COMPARISON\r\n";
+        $csv .= str_repeat('-', 50) . "\r\n";
+        $csv .= "Metric,Change vs Previous Month,Trend\r\n";
+        
+        if ($report['comparison_with_previous']['income_change'] !== null) {
+            $incomeChange = $report['comparison_with_previous']['income_change'];
+            $incomeTrend = $incomeChange >= 0 ? 'UP ▲' : 'DOWN ▼';
+            $csv .= sprintf(
+                "Income Performance,%.1f%%,%s\r\n",
+                abs($incomeChange),
+                $incomeTrend
+            );
+        }
+        
+        if ($report['comparison_with_previous']['expense_change'] !== null) {
+            $expenseChange = $report['comparison_with_previous']['expense_change'];
+            $expenseTrend = $expenseChange >= 0 ? 'UP ▲' : 'DOWN ▼';
+            $csv .= sprintf(
+                "Expense Performance,%.1f%%,%s\r\n",
+                abs($expenseChange),
+                $expenseTrend
+            );
+        }
+        $csv .= "\r\n";
+        
+        // Section 4: Daily Summary (First 10 days)
+        if (count($report['daily_breakdown'] ?? []) > 0) {
+            $csv .= "SECTION 4: DAILY TRANSACTION SUMMARY (First 10 Days)\r\n";
+            $csv .= str_repeat('-', 50) . "\r\n";
+            $csv .= "Date,Income (IDR),Expenses (IDR),Net (IDR)\r\n";
+            
+            foreach (array_slice($report['daily_breakdown'], 0, 10) as $day) {
+                $net = $day['income'] - $day['expense'];
+                $csv .= sprintf(
+                    "%s,\"Rp %s\",\"Rp %s\",\"Rp %s\"\r\n",
+                    \Carbon\Carbon::parse($day['date'])->format('d M Y'),
+                    number_format($day['income'], 0, ',', '.'),
+                    number_format($day['expense'], 0, ',', '.'),
+                    number_format($net, 0, ',', '.')
+                );
+            }
+            
+            if (count($report['daily_breakdown']) > 10) {
+                $csv .= "\r\n";
+                $csv .= "* Note: Showing first 10 days out of " . count($report['daily_breakdown']) . " total transaction days\r\n";
+            }
+            $csv .= "\r\n";
+        }
+        
+        // Footer
+        $csv .= str_repeat('=', 80) . "\r\n";
+        $csv .= "Report ID: " . strtoupper(uniqid('RPT-')) . "\r\n";
+        $csv .= "FinFlow - Personal Finance Management System\r\n";
+        $csv .= "This is a computer-generated report. No signature required.\r\n";
+        
         return Response::make($csv, 200, [
             'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="financial_report_' . now()->format('Y-m-d') . '.csv"',
