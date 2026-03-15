@@ -1,5 +1,4 @@
-import { ChevronRight, Download, FileSpreadsheet, FileText } from 'lucide-react';
-import { router } from '@inertiajs/react';
+import { ChevronRight, FileSpreadsheet, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface QuickAction {
@@ -11,28 +10,16 @@ interface QuickAction {
 export function QuickActions() {
     const handleExportPDF = () => {
         toast.info('Generating PDF report...');
-        router.get('/reports/export/pdf', undefined, {
-            preserveState: true,
-            onSuccess: () => {
-                toast.success('PDF report downloaded!');
-            },
-            onError: () => {
-                toast.error('Failed to generate PDF report.');
-            },
-        });
+        // Use window.location for file download (Inertia doesn't handle file downloads)
+        window.location.href = '/reports/export/pdf';
+        toast.success('PDF report is downloading!');
     };
 
     const handleExportExcel = () => {
         toast.info('Generating Excel report...');
-        router.get('/reports/export/excel', undefined, {
-            preserveState: true,
-            onSuccess: () => {
-                toast.success('Excel report downloaded!');
-            },
-            onError: () => {
-                toast.error('Failed to generate Excel report.');
-            },
-        });
+        // Use window.location for file download (Inertia doesn't handle file downloads)
+        window.location.href = '/reports/export/excel';
+        toast.success('Excel report is downloading!');
     };
 
     const actions: QuickAction[] = [

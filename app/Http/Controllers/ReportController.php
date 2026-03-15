@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\ReportService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
@@ -62,13 +63,11 @@ class ReportController extends Controller
         $currentMonth = now()->format('Y-m');
         $report = $this->reportService->getMonthlyReport($user->id, $currentMonth);
         
-        // Generate simple PDF using HTML
-        $html = view('reports.pdf', compact('report', 'user', 'currentMonth'))->render();
+        // Generate PDF using DomPDF
+        $pdf = Pdf::loadView('reports.pdf', compact('report', 'user', 'currentMonth'));
+        $pdf->setPaper('A4', 'portrait');
         
-        return Response::make($html, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="financial_report_' . now()->format('Y-m-d') . '.pdf"',
-        ]);
+        return $pdf->download('financial_report_' . now()->format('Y-m-d') . '.pdf');
     }
 
     /**
