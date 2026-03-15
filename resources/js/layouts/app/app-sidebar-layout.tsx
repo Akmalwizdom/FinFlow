@@ -7,9 +7,9 @@ import { AppSidebarHeader } from '@/components/app-sidebar-header';
 import { MobileHeader } from '@/components/mobile-header';
 import { MobileNav } from '@/components/mobile-nav';
 import { AddTransactionModal, type TransactionFormData } from '@/components/transactions/add-transaction-modal';
-import { type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem, type Category } from '@/types';
 import { router } from '@inertiajs/react';
-import { transactions as transactionsApi, categories as categoriesApi, type Category } from '@/lib/api';
+import * as api from '@/lib/api';
 import { toast } from 'sonner';
 import { useEffect } from 'react';
 
@@ -23,7 +23,7 @@ export default function AppSidebarLayout({
     // Fetch categories when modal opens
     useEffect(() => {
         if (isModalOpen && categories.length === 0) {
-            categoriesApi
+            api.categoriesApi
                 .list()
                 .then((res) => {
                     setCategories(res.data.data);
@@ -35,7 +35,7 @@ export default function AppSidebarLayout({
     // Handle save transaction
     const handleSaveTransaction = async (data: TransactionFormData) => {
         try {
-            await transactionsApi.create({
+            await api.transactionsApi.create({
                 category_id: data.category_id,
                 account_id: data.account_id,
                 type: data.type,
