@@ -9,11 +9,9 @@ import { MobileNav } from '@/components/mobile-nav';
 import { AddTransactionModal, type TransactionFormData } from '@/components/transactions/add-transaction-modal';
 import { type BreadcrumbItem } from '@/types';
 import { router } from '@inertiajs/react';
-import { transactions as transactionsApi } from '@/lib/api';
+import { transactions as transactionsApi, categories as categoriesApi, type Category } from '@/lib/api';
 import { toast } from 'sonner';
-import { Category } from '@/types';
 import { useEffect } from 'react';
-import { categories as categoriesApi } from '@/lib/api';
 
 export default function AppSidebarLayout({
     children,
